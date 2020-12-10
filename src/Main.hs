@@ -1,1 +1,6 @@
-main = putStrLn "SIMPLI - the Simple IMP Language Interpreter"
+module Main (main) where
+  import Cli
+
+  main = do
+    s <- getInputProgram
+    putStrLn s
