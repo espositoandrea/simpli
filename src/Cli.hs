@@ -54,7 +54,6 @@ getInputProgram :: IO String
 getInputProgram = do
   args <- getArgs
   let (actions, nonOptions, errors) = getOpt RequireOrder options args
-  opts <- foldl (>>=) (return startOptions) actions
   when (not (null errors)) (do
     putStr "Error. "
     mapM putStr errors
@@ -62,6 +61,7 @@ getInputProgram = do
     getProgName >>= putStr 
     putStrLn " -h' to get more help"
     exitWith (ExitFailure 1))
+  opts <- foldl (>>=) (return startOptions) actions
   command <- optCommand opts 
   if not (null command)
     then return command
