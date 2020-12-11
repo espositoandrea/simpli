@@ -22,6 +22,10 @@ executable simpli
   other-modules:       Cli
                        Environment
                        Parsers.Base
+                       Parsers.Fundamentals
+                       Parsers.Aexp
+                       Parsers.Bexp
+                       Parsers.Com
                        Parsers.Environment
                        Paths_simpli
 

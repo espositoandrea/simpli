@@ -1,4 +1,5 @@
 module Parsers.Base where
+import           Control.Applicative
 import           Environment
 
 newtype Parser a = P(Env -> String -> [(Env, a, String)])
@@ -27,3 +28,12 @@ instance Monad Parser where
   p >>= f = P(\env input -> case parse p env input of
                 []              -> []
                 [(env, v, out)] -> parse (f v) env out)
+
+instance Alternative Parser where
+  -- empty :: Parser a
+  empty = P(\_ _ -> [])
+
+  -- (<|>) :: Parser a -> Parser a -> Parser a
+  p <|> q = P(\env input -> case parse p env input of
+                []              -> parse q env input
+                [(env, v, out)] -> [(env, v, out)])
