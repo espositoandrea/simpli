@@ -32,6 +32,11 @@
 \RequirePackage{makecell}
 \RequirePackage{graphicx}
 \RequirePackage{titlesec}
+\RequirePackage{syntax}
+
+\renewcommand{\syntleft}{$\langle$\normalfont}
+\renewcommand{\syntright}{$\rangle$}
+\setlength{\grammarindent}{6em}
 
 \ifthenelse{\boolean{isdraft}}{%
 	\RequirePackage{draftwatermark}%

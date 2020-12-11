@@ -34,6 +34,75 @@
 \mainmatter
 \chapter{Introduction}
 
+\section{The Language's Grammar}
+
+In this section, the language grammar is presented. It is defined as a Type-3
+grammar of a regular language using the Backus-Naur Form. In the following
+rules, the notation ``a $\mid$ b $\mid$ ... $\mid$ z'' is used as a short-hand
+notation to express all the lower case letters from ``a'' to ``z'' (the same
+applies for capital letters).
+
+\subsection{Representation of Numbers}
+\begin{grammar}
+	<integer> ::= "-" <natural> | <natural>
+
+	<natural> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+\end{grammar}
+
+\subsection{Identifiers and Variables}
+\begin{grammar}
+	<identifier> ::= <lower> <alphanum> | <lower> 
+	
+	<alphanum> ::= <upper> <alphanum>
+	\alt <lower> <alphanum>
+	\alt <natural> <alphanum>
+	\alt<upper> | <lower> | <natural>
+
+	<lower> ::= "a" | "b" | ... | "z"
+
+	<upper> ::= "A" | "B" | ... | "Z"
+\end{grammar}
+
+\subsection{Arithmetical Expressions}
+\begin{grammar}
+	<aexp> ::= <aterm>
+	\alt <aterm> "+" <aexp>
+	\alt <aterm> "-" <aexp>
+
+	<aterm> ::= <afactor> | <afactor> "*" <aterm>
+
+	<afactor> ::= "(" <aexp> ")"
+	\alt <integer> | <identifier>
+\end{grammar}
+
+\subsection{Boolean Expressions}
+\begin{grammar}
+	<bexp> ::= <bterm> "or" <bexp> | <bterm>
+
+	<bterm> ::= <bfactor> "and" <bterm> | <bfactor>
+
+	<bfactor> ::= "true" | "false"
+	\alt "!" <bfactor>
+	\alt "(" <bexp> ")"
+	\alt <bcomparison>
+
+	<bcomparison> ::= <aexp> "=" <aexp> | <aexp> "<=" <aexp>
+\end{grammar}
+
+\subsection{Imperative Commands}
+\begin{grammar}
+	<program> ::= <command> | <command> ";" <program>
+
+	<command> ::= <assignment> | <ifThenElse> | <while> | "skip"
+
+	<assignment> ::= <identifier> ":=" <aexp>
+
+	<ifThenElse> ::= "if" <bexp> "then" <program> "end"
+	\alt "if" <bexp> "then" <program> "else" <program> "end"
+
+	<while> ::= "while" <bexp> "do" <program> "end"
+\end{grammar}
+
 \chapter{Design}
 
 \chapter{Implementation}
