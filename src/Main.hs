@@ -1,6 +1,7 @@
 module Main (main) where
-  import Cli
+import Cli
 
-  main = do
-    s <- getInputProgram
-    putStrLn s
+main :: IO()
+main = do
+  s <- getInputProgram
+  putStrLn s

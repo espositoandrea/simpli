@@ -9,14 +9,14 @@ import Control.Monad
 
 printVersion :: IO ()
 printVersion = do
-  putStr "SIMPLI (the Simple IMP Language Interpreter) "
-  putStrLn (showVersion version)
-  putStrLn "Copyright (C) 2020, Andrea Esposito."
-  putStrLn "Released under the GNU GPL v3 License <https://gnu.org/licenses/gpl-3.0.html>."
-  putStrLn "This is free software: you are free to change and redistribute it."
-  putStrLn "There is NO WARRANTY, to the extent permitted by law."
-  putStrLn ""
-  putStrLn "Written by Andrea Esposito."
+  putStrLn $ "SIMPLI (the Simple IMP Language Interpreter) " ++
+    showVersion version ++ "\n" ++
+    "Copyright (C) 2020, Andrea Esposito.\n" ++
+    "Released under the GNU GPL v3 License <https://gnu.org/licenses/gpl-3.0.html>.\n" ++
+    "This is free software: you are free to change and redistribute it.\n" ++
+    "There is NO WARRANTY, to the extent permitted by law.\n" ++
+    "\n" ++
+    "Written by Andrea Esposito."
 
 printHelp :: IO()
 printHelp = do
@@ -28,6 +28,7 @@ printHelp = do
     usageInfo "Available options:" options
 
 data Options = Options { optCommand :: IO String }
+
 startOptions :: Options
 startOptions = Options { optCommand = return "" }
 
