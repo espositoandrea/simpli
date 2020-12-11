@@ -19,7 +19,11 @@ extra-source-files:  README.md docs/documentation.pdf
 
 executable simpli
   main-is:             Main.hs
-  other-modules:       Cli Paths_simpli
+  other-modules:       Cli
+                       Environment
+                       Parsers.Base
+                       Parsers.Environment
+                       Paths_simpli
 
   autogen-modules:     Paths_simpli
   -- other-extensions:
