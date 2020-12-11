@@ -18,6 +18,15 @@ printVersion = do
   putStrLn ""
   putStrLn "Written by Andrea Esposito."
 
+printHelp :: IO()
+printHelp = do
+  prg <- getProgName
+  putStr $ "Usage: " ++ prg ++ " [options ...] [FILE | -c COMMAND]\n" ++ 
+    "Launches the interpreter for the IMP Language using FILE as source.\n" ++
+    "If FILE is not provided, the source code is read from stdin.\n" ++
+    "\n" ++
+    usageInfo "Available options:" options
+
 data Options = Options { optCommand :: IO String }
 startOptions :: Options
 startOptions = Options { optCommand = return "" }
@@ -26,22 +35,17 @@ options :: [OptDescr (Options -> IO Options) ]
 options =
   [ Option "v" ["version"]
       (NoArg (\_ -> do
-                    printVersion
-                    exitWith ExitSuccess))
+        printVersion
+        exitWith ExitSuccess))
      "Print version information and exit"
   , Option "h" ["help"]
       (NoArg (\_ -> do
-        prg <- getProgName
-        putStrLn $ "Usage: " ++ prg ++ " [options ...] [FILE | -c COMMAND]"
-        putStrLn "Launches the interpreter for the IMP Language using FILE as source code."
-        putStrLn "If FILE is not provided, the source code is read from stdin."
-        putStrLn ""
-        putStr (usageInfo "Available options:" options)
+        printHelp
         exitWith ExitSuccess))
       "Show this help message and exit"
   , Option "c" ["command"]
       (ReqArg (\arg opt -> return opt { optCommand = return arg }) "COMMAND")
-      "A command to be executed instead of reading from FILE"
+      "A command to be executed instead of\nreading code from FILE"
   ]
 
 -- |Get the source code that will be used as input by the interpreter
