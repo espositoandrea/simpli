@@ -46,7 +46,9 @@ applies for capital letters).
 \begin{grammar}
 	<integer> ::= "-" <natural> | <natural>
 
-	<natural> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+	<natural> ::= <digit> | <digit> <natural>
+
+	<digit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 \end{grammar}
 
 \subsection{Identifiers and Variables}
@@ -91,11 +93,11 @@ applies for capital letters).
 
 \subsection{Imperative Commands}
 \begin{grammar}
-	<program> ::= <command> | <command> ";" <program>
+	<program> ::= <command> | <command> <program>
 
-	<command> ::= <assignment> | <ifThenElse> | <while> | "skip"
+	<command> ::= <assignment> | <ifThenElse> | <while> | "skip" ";"
 
-	<assignment> ::= <identifier> ":=" <aexp>
+	<assignment> ::= <identifier> ":=" <aexp> ";"
 
 	<ifThenElse> ::= "if" <bexp> "then" <program> "end"
 	\alt "if" <bexp> "then" <program> "else" <program> "end"

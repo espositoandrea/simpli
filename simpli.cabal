@@ -21,10 +21,12 @@ executable simpli
   main-is:             Main.hs
   other-modules:       Cli
                        Environment
-                       Parsers.Base
+                       Parsers
+                       Parsers.Core
                        Parsers.Fundamentals
                        Parsers.Aexp
                        Parsers.Bexp
+                       Parsers.Readers
                        Parsers.Com
                        Parsers.Environment
                        Paths_simpli

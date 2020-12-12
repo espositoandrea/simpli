@@ -1,0 +1,12 @@
+# This is a comment. It is not parsed by the interpreter and it is actually not
+# part of the IMP syntax. Furthermore, note that eventual blank lines are
+# ignored.
+
+n:=7;
+fact:=1;
+while !(n<=0) do
+	fact:=fact*n;
+	n:=n-1
+end;
+n:=7;
+n:=n*4;

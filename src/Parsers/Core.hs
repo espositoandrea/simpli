@@ -1,11 +1,11 @@
-module Parsers.Base where
+module Parsers.Core (Parser (..), parse) where
 import           Control.Applicative
 import           Environment
 
 newtype Parser a = P(Env -> String -> [(Env, a, String)])
 
 parse :: Parser a -> Env -> String -> [(Env, a, String)]
-parse (P par) env input = par [] input
+parse (P par) env input = par env input
 
 -- Parser deve essere functor, applicative and monad
 instance Functor Parser where

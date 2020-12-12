@@ -1,10 +1,9 @@
-module Parsers.Environment where
+module Parsers.Environment (updateEnv, readVariable) where
 import           Environment
-import           Parsers.Base
+import           Parsers.Core
 
 updateEnv :: Variable -> Parser String
-updateEnv var = P(\env input -> case input of
-                   xs -> [(modifyEnv env var, "", xs)])
+updateEnv var = P(\env input -> [(modifyEnv env var, "", input)])
 
 readVariable :: String -> Parser Int
 readVariable name = P(\env input -> case searchVariable env name of
