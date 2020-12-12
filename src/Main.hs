@@ -1,6 +1,6 @@
 module Main (main) where
-import Cli
-import Parsers (eval)
+import           Cli
+import           Parsers (eval)
 
 main :: IO()
 main = do

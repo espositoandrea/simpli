@@ -1,11 +1,11 @@
 module Cli (getInputProgram) where
-import Paths_simpli (version)
-import Data.Version (showVersion)
-import System.Console.GetOpt
-import System.Environment
-import System.Exit
-import System.IO
-import Control.Monad
+import           Control.Monad
+import           Data.Version          (showVersion)
+import           Paths_simpli          (version)
+import           System.Console.GetOpt
+import           System.Environment
+import           System.Exit
+import           System.IO
 
 printVersion :: IO ()
 printVersion = do
@@ -21,7 +21,7 @@ printVersion = do
 printHelp :: IO()
 printHelp = do
   prg <- getProgName
-  putStr $ "Usage: " ++ prg ++ " [options ...] [FILE | -c COMMAND]\n" ++ 
+  putStr $ "Usage: " ++ prg ++ " [options ...] [FILE | -c COMMAND]\n" ++
     "Launches the interpreter for the IMP Language using FILE as source.\n" ++
     "If FILE is not provided, the source code is read from stdin.\n" ++
     "\n" ++
@@ -58,11 +58,11 @@ getInputProgram = do
     putStr "Error. "
     mapM putStr errors
     putStr "Use '"
-    getProgName >>= putStr 
+    getProgName >>= putStr
     putStrLn " -h' to get more help"
     exitWith (ExitFailure 1))
   opts <- foldl (>>=) (return startOptions) actions
-  command <- optCommand opts 
+  command <- optCommand opts
   if not (null command)
     then return command
     else if null nonOptions

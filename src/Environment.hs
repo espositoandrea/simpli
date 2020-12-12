@@ -2,7 +2,7 @@ module Environment where
 
 data Variable = Variable { name  :: String
                          , vtype :: String
-                         , value :: Int 
+                         , value :: Int
                          }
 
 instance Show Variable where

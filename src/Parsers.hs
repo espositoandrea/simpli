@@ -1,11 +1,9 @@
 module Parsers    where
 
-import Parsers.Core (parse)
-import Parsers.Com (program)
-import Environment (Env)
-import Data.String (words)
-import Data.List (isSuffixOf, isPrefixOf)
-import Debug.Trace
+import           Data.List
+import           Environment  (Env)
+import           Parsers.Com  (program)
+import           Parsers.Core (parse)
 
 removeComments :: String -> String
 removeComments [] = []
@@ -30,5 +28,5 @@ removeWhitespace xs = foldl f "" (words xs)
                                         else x ++ y
 eval :: String -> Env
 eval c = case parse program [] ((removeWhitespace . removeComments) c) of
-           [] -> []
+           []          -> []
            [(e, _, _)] -> e

@@ -4,8 +4,8 @@ import           Control.Applicative
 import           Control.Monad        hiding (return)
 import           Environment
 import           Parsers.Aexp
-import           Parsers.Core
 import           Parsers.Bexp
+import           Parsers.Core
 import           Parsers.Environment
 import           Parsers.Fundamentals
 import qualified Parsers.Readers      as R
