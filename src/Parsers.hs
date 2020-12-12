@@ -1,4 +1,4 @@
-module Parsers    where
+module Parsers (eval) where
 
 import           Data.List
 import           Environment  (Env)

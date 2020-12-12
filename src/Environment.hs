@@ -1,4 +1,4 @@
-module Environment where
+module Environment (Variable(..), Env, modifyEnv, searchVariable) where
 
 data Variable = Variable { name  :: String
                          , vtype :: String
