@@ -64,4 +64,4 @@ while = do r <- R.while
                      return ""
 
 repeatWhile :: String -> Parser String
-repeatWhile s = P(\env input -> [(env, "", s ++ input)])
+repeatWhile s = P(\env input -> Just (env, "", s ++ input))

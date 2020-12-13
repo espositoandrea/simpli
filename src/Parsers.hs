@@ -28,7 +28,7 @@ removeWhitespace xs = foldl f "" (words xs)
                                         else x ++ y
 eval :: String -> Env
 eval c = case parse program [] ((removeWhitespace . removeComments) c) of
-           []            -> error "Invalid input"
-           [(e, _, [])]  -> e
-           [(e, _, out)] -> error $ "Invalid input: unused '" ++ out ++ "'"
+           Nothing          -> error "Invalid input"
+           Just (e, _, [])  -> e
+           Just (e, _, out) -> error $ "Invalid input: unused '" ++ out ++ "'"
 

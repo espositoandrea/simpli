@@ -9,17 +9,17 @@ import           Prelude             hiding (return)
 -- character otherwise
 item :: Parser Char
 item = P(\env input -> case input of
-           []     -> []
-           (x:xs) -> [(env, x, xs)])
+           []     -> Nothing
+           (x:xs) -> Just (env, x, xs))
 
 -- |A parser that always fails.
 failure :: Parser a
-failure = P(\_ _ -> [])
+failure = P(\_ _ -> Nothing)
 
 -- |A parser that always succeeds returning the value v without consuming any
 -- input
 return :: a -> Parser a
-return v = P(\env input -> [(env, v, input)])
+return v = P(\env input -> Just (env, v, input))
 
 satisfies :: (Char -> Bool) -> Parser Char
 satisfies p = do x <- item

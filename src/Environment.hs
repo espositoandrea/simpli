@@ -17,8 +17,8 @@ modifyEnv (x:xs) var
   | (name x) == (name var) = [var] ++ xs
   | otherwise              = [x] ++ modifyEnv xs var
 
-searchVariable :: Env -> String -> [Int]
-searchVariable [] _ = []
+searchVariable :: Env -> String -> Maybe Int
+searchVariable [] _ = Nothing 
 searchVariable (x:xs) query
-  | (name x) == query = [value x]
+  | (name x) == query = Just $ value x
   | otherwise         = searchVariable xs query
