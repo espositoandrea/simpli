@@ -184,11 +184,12 @@ $ simpli -c "x := 3; y := x + 4"
 To use SIMPLI as a library (or in Hugs), the only module that needs to be
 imported is the module ``\texttt{Parsers}'', that contains and exports the
 definition of the function \texttt{eval} of type
-\lstinline|eval :: String -> Env|. For example, to use it in an Hugs console,
-start the Hugs console in the directory containing the file
-``\texttt{Parsers.hs}'' and load the file using \texttt{:load}. Then you can
-run the interpreter by using the function \texttt{eval}, where the required
-argument is the code to be executed.
+\lstinline|eval :: String -> Env|.
+
+For example, to use it in an Hugs console, start the Hugs console in the
+directory containing the file ``\texttt{Parsers.hs}'' and load the file using
+\texttt{:load}. Then you can run the interpreter by using the function
+\texttt{eval}, where the required argument is the code to be executed.
 
 In the following listing, an example of how to use SIMPLI in Hugs is provided
 (supposing Hugs was started in the same directory as ``\texttt{Parsers}'').

@@ -134,8 +134,11 @@
 	\textbf{\title}\\
 	\footnotesize
 	Copyright \copyright\ 2020, \@author.\\
-	Typeset using \LaTeX, written using Vim and Vim-\LaTeX. Compiled using
-	\TeX\ Live.\\[1em]
+	This work is licensed under CC BY-ND 4.0. To view a copy of this license,
+	visit:\\
+	\url{https://creativecommons.org/licenses/by-nd/4.0}.\\
+	The snippets of code contained in this document are licensed under the GNU
+	GPL v3 License, unless otherwise specified.\\[1em]
 	\textbf{Course:} \@project.\\
 	\textbf{Degree Course:} Master's Degree in Computer Science (curriculum:
 	``Artificial Intelligence'').\\
