@@ -155,6 +155,7 @@
 	numbers=left,
 	basicstyle=\ttfamily\footnotesize,
 	breaklines=true,
+	showstringspaces=false,
 	postbreak=\mbox{$\hookrightarrow$\space},
 	numberstyle=\tiny,
 	tabsize=4,

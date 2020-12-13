@@ -1,4 +1,5 @@
 \documentclass{esposito-documentation}
+\usepackage[backend=biber,sorting=none]{biblatex}
 
 \graphicspath{{images/}}
 
@@ -24,6 +25,8 @@
 	inputpath={../src},
 	language=haskell,
 }
+
+\addbibresource{bibliography.bib}
 
 \begin{document}
 \frontmatter
@@ -93,11 +96,11 @@ applies for capital letters).
 
 \subsection{Imperative Commands}
 \begin{grammar}
-	<program> ::= <command> | <command> <program>
+	<program> ::= <command> | <command> ";" | <command> ";" <program>
 
-	<command> ::= <assignment> | <ifThenElse> | <while> | "skip" ";"
+	<command> ::= <assignment> | <ifThenElse> | <while> | "skip"
 
-	<assignment> ::= <identifier> ":=" <aexp> ";"
+	<assignment> ::= <identifier> ":=" <aexp>
 
 	<ifThenElse> ::= "if" <bexp> "then" <program> "end"
 	\alt "if" <bexp> "then" <program> "else" <program> "end"
@@ -105,18 +108,96 @@ applies for capital letters).
 	<while> ::= "while" <bexp> "do" <program> "end"
 \end{grammar}
 
+\section{Additions to the Syntax Given During Lectures}
+
+A few additions are done in this version of the IMP language, that are not
+explicitly supported in the syntax showed during lectures but are very common
+in commercially-used programming languages. The additions done to IMP are
+described in the following paragraphs.
+
+\begin{itemize}
+	\item The SIMPLI interpreter supports the insertion of white space to make
+		the code more readable for the programmer. This allows to write code
+		that spans on multiple lines and to use tabs and/or spaces to indent
+		sections of code. All the inserted white space is ignored and discarded
+		right before parsing: the only white space kept during the parsing is
+		the mandatory white space in the constructs ``if-then-else'' and
+		``while-do''.
+	\item The SIMPLI interpreter supports the insertion of comments in the
+		code. Comments start with an hash (``\texttt{\#}'') and span for the
+		entire lines. This is a behaviour inspired by commonly used programming
+		languages like the POSIX Shell Command Language \cite{shell-syntax} or
+		Python \cite{python-syntax}.
+\end{itemize}
+
 \chapter{Design}
 
 \chapter{Implementation}
 
 \chapter{Usage Examples}
 
+In the following sections, various examples of how to use the SIMPLI
+interpreter are given.
+
 \section{Reading a Source File}
+
+The SIMPLI interpreter is capable of running a program written in a file. Once
+compiled, supposing to have a file ``\texttt{code.imp}'' that contains the
+program to be run (written in valid IMP), it can be executed using the
+following command.
+
+\begin{lstlisting}[language=sh,numbers=none]
+$ cat code.imp # The content of the input file
+x := 3; y := x + 4
+$ simpli code.imp
+[x = 3,y = 7]
+\end{lstlisting}
 
 \section{Reading from Standard input}
 
+The SIMPLI interpreter, by default, tries to read the program to be executed
+from the standard input. This allows the creation of chains of commands to
+produce the source code and, given the fact that the final memory state is
+written to the standard output, it is possible to chain commands that use the
+output of the given program. To execute SIMPLI and read the source code from
+the standard input, simply execute it without any option.
+
+\begin{lstlisting}[language=sh,numbers=none]
+$ echo "x := 3; y := x + 4" | simpli
+[x = 3,y = 7]
+\end{lstlisting}
+
 \section{Interpreting a Command}
+
+The SIMPLI interpreter is capable of running a simple command given as an
+argument through its Command Line Interface. Simply provide the command to be
+run using the ``\texttt{--command}/\texttt{-c}'' option and SIMPLI will execute
+it.
+
+\begin{lstlisting}[language=sh,numbers=none]
+$ simpli -c "x := 3; y := x + 4"
+[x = 3,y = 7]
+\end{lstlisting}
 
 \section{Using It as a Library}
 
+To use SIMPLI as a library (or in Hugs), the only module that needs to be
+imported is the module ``\texttt{Parsers}'', that contains and exports the
+definition of the function \texttt{eval} of type
+\lstinline|eval :: String -> Env|. For example, to use it in an Hugs console,
+start the Hugs console in the directory containing the file
+``\texttt{Parsers.hs}'' and load the file using \texttt{:load}. Then you can
+run the interpreter by using the function \texttt{eval}, where the required
+argument is the code to be executed.
+
+In the following listing, an example of how to use SIMPLI in Hugs is provided
+(supposing Hugs was started in the same directory as ``\texttt{Parsers}'').
+
+\begin{lstlisting}[language=sh,numbers=none]
+Hugs> :load Parsers
+Parsers> eval "x := 3; y := x + 4"
+[x = 3,y = 7]
+\end{lstlisting}
+
+\printbibliography
 \end{document}
