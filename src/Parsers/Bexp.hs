@@ -3,20 +3,27 @@ import           Control.Applicative
 import           Parsers.Aexp         (aexp)
 import           Parsers.Core
 import           Parsers.Fundamentals
+import qualified Parsers.Readers      as R
 import           Prelude              hiding (return)
 
 bexp :: Parser Bool
 bexp = (do x <- bterm
            symbol "or"
-           y <- bexp
-           return $ x || y)
+           if x
+             then do R.bterm
+                     return x
+             else do y <- bterm
+                     return $ x || y)
        <|> bterm
 
 bterm :: Parser Bool
 bterm = (do x <- bfactor
             symbol "and"
-            y <- bterm
-            return $ x && y)
+            if x
+              then do y <- bterm
+                      return $ x && y
+              else do R.bterm
+                      return x)
        <|> bfactor
 
 bfactor :: Parser Bool
