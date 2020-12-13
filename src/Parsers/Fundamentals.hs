@@ -78,9 +78,16 @@ alphanum = (do x <- upper
                return [x])
 
 identifier :: Parser String
-identifier = (do x <- lower
+identifier = (do x <- upper
                  xs <- alphanum
                  return (x:xs))
+             <|>
+             (do x <- lower
+                 xs <- alphanum
+                 return (x:xs))
+             <|>
+             (do x <- upper
+                 return [x])
              <|>
              (do x <- lower
                  return [x])
