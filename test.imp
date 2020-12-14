@@ -8,5 +8,3 @@ while !(n<=0) do
 	fact:=fact*n;
 	n:=n-1
 end;
-n:=7;
-n:=n*4;
