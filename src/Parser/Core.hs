@@ -7,7 +7,7 @@ newtype Parser a = P(Env -> String -> Maybe (Env, a, String))
 parse :: Parser a -> Env -> String -> Maybe (Env, a, String)
 parse (P par) env input = par env input
 
--- Parser deve essere functor, applicative and monad
+-- Parser must be a functor, applicative and monad
 instance Functor Parser where
   -- fmap :: (a -> b) -> Parser a -> Parser b
   fmap g p = P(\env input -> case parse p env input of
