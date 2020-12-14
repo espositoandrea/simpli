@@ -1,5 +1,11 @@
 \documentclass{esposito-documentation}
 \usepackage[backend=biber,sorting=none]{biblatex}
+\usepackage{tikz}
+\usepackage{tikz-uml}
+
+\tikzumlset{
+	fill component=yellow!0
+}
 
 \graphicspath{{images/}}
 
@@ -37,15 +43,50 @@
 \mainmatter
 \chapter{Introduction}
 
-\section{The Language's Grammar}
+The following document describes the grammar of a typical imperative language,
+``IMP'', and an implementation of the relative interpreter written in the
+Haskell language.
+
+\section{The IMP Language}
+
+IMP is a typical imperative programming language. It is, therefore, composed of the classic constructs that all similar languages have:
+\begin{description}
+	\item[Skip] An instruction that has no side effects. It's only purpose is
+		to jump to the next instruction, without any modification to the
+		machine's memory.
+	\item[Assignment] An instruction that allows the assignment of a value to a
+		variable (i.e. a memory location). The assigned value could be both a
+		numerical value or a result of an arithmetical computation.
+	\item[If-Then-Else] This is the classical conditional control structure.
+		Given a boolean condition, if it evaluates to the truth value $\top$
+		then the ``\texttt{then}'' section will be executed, otherwise (if the
+		condition evaluates to the false value $\bot$) the ``\texttt{else}''
+		section will be executed.
+	\item[While-Do] An iterative control structure that executes a set of
+		instruction as long as a boolean condition evaluates to the truth value
+		$\top$.
+\end{description}
+
+\subsection{The Language's Grammar}
 
 In this section, the language grammar is presented. It is defined as a Type-3
-grammar of a regular language using the Backus-Naur Form. In the following
-rules, the notation ``a $\mid$ b $\mid$ ... $\mid$ z'' is used as a short-hand
-notation to express all the lower case letters from ``a'' to ``z'' (the same
-applies for capital letters).
+grammar of a regular language using the Backus-Naur Form. The described grammar
+represents the previously defined constructs. For this reason, a set of three
+types of expression will be used: $\mathrm{Aexp}$, $\mathrm{Bexp}$ and
+$\mathrm{Com}$ (respectively, the set of all arithmetical expressions, of all
+boolean expressions and of all commands). For each of this set, a generative
+grammar of the expressions is given.
 
-\subsection{Representation of Numbers}
+In the following rules, the notation ``a $\mid$ b $\mid$ ... $\mid$ z'' is used
+as a short-hand notation to express all the lower case letters from ``a'' to
+``z'' (the same applies for capital letters).
+
+\subsubsection{Representation of Numbers}\label{sec:grammar-numbers}
+
+A preliminary grammar to represents integers and natural numbers is here
+presented. The IMP language recognizes integers (thus, both positive and
+negative natural numbers) expressed in base ten.
+
 \begin{grammar}
 	<integer> ::= "-" <natural> | <natural>
 
@@ -54,9 +95,17 @@ applies for capital letters).
 	<digit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 \end{grammar}
 
-\subsection{Identifiers and Variables}
+\subsubsection{Identifiers and Variables}\label{sec:grammar-id}
+
+A preliminary grammar to represents variables' identifiers is here presented.
+The IMP language recognizes alphanumeric identifiers that start with a lower
+case letter. The recognized letters are the letters from ``a'' to ``z'', both
+in upper and lower case.
+
 \begin{grammar}
-	<identifier> ::= <lower> <alphanum> | <lower> 
+	<identifier> ::= <upper> <alphanum>
+	\alt <lower> <alphanum>
+	\alt <upper> | <lower> 
 	
 	<alphanum> ::= <upper> <alphanum>
 	\alt <lower> <alphanum>
@@ -68,7 +117,11 @@ applies for capital letters).
 	<upper> ::= "A" | "B" | ... | "Z"
 \end{grammar}
 
-\subsection{Arithmetical Expressions}
+\subsubsection{Arithmetical Expressions}\label{sec:grammar-aexp}
+
+A grammar for the expressions in $\mathrm{Aexp}$ is here presented. The
+provided operations are sum, difference and product.
+
 \begin{grammar}
 	<aexp> ::= <aterm>
 	\alt <aterm> "+" <aexp>
@@ -80,7 +133,19 @@ applies for capital letters).
 	\alt <integer> | <identifier>
 \end{grammar}
 
-\subsection{Boolean Expressions}
+\subsubsection{Boolean Expressions}\label{sec:grammar-bexp}
+
+A grammar for the expressions in $\mathrm{Bexp}$ is here presented. The
+provided operations are the logical ``and'', ``or'' and ``not'', alongside with
+the comparison operations ``equals to'' and ``less or equal than''.
+
+To simplify the writing of programs in the IMP language, the truth value $\top$
+will be represented as ``\texttt{true}'' and the false vale $\bot$ will be
+represented as ``\texttt{false}''. Furthermore, the boolean operators $\land,
+\vee, \neg$ are represented by the words associated with them (respectively,
+``\texttt{and}'', ``\texttt{or}'' and ``\texttt{not}'') and the less or equal
+symbol ``$\leq$'' will be represented using ``$<=$'' (as many other languages).
+
 \begin{grammar}
 	<bexp> ::= <bterm> "or" <bexp> | <bterm>
 
@@ -94,7 +159,11 @@ applies for capital letters).
 	<bcomparison> ::= <aexp> "=" <aexp> | <aexp> "<=" <aexp>
 \end{grammar}
 
-\subsection{Imperative Commands}
+\subsubsection{Imperative Commands}\label{sec:grammar-com}
+
+A grammar for the commands in $\mathrm{Com}$ is here presented. The recognized
+commands are the ones presented before.
+
 \begin{grammar}
 	<program> ::= <command> | <command> ";" | <command> ";" <program>
 
@@ -108,7 +177,12 @@ applies for capital letters).
 	<while> ::= "while" <bexp> "do" <program> "end"
 \end{grammar}
 
-\section{Additions to the Syntax Given During Lectures}
+Given the above grammar, it is clear that the set of keywords of the IMP
+language is made of ``\texttt{skip}'', ``\texttt{if}'', ``\texttt{then}'',
+``\texttt{else}'', ``\texttt{end}'', ``\texttt{while}'', ``\texttt{do}''. As of
+the above grammar, the language is case sensitive.
+
+\section{Additions to the Syntax Given During Lectures}\label{sec:additions}
 
 A few additions are done in this version of the IMP language, that are not
 explicitly supported in the syntax showed during lectures but are very common
@@ -132,8 +206,393 @@ described in the following paragraphs.
 
 \chapter{Design}
 
+The SIMPLI interpreter was defined by following a strategy that is similar to
+the one presented in the book ``Programming in Haskell'' \cite{Hutton2017}. So
+a set of \emph{Parser}-type monads to check the syntax correctness of the
+program and, at the same type, to evaluate expressions (both boolean and
+arithmetical) and commands that compose it.
+
+In order to keep track of the memory state of the machine throughout the
+computation while keeping the computation in a ``sandbox'' (to protect any
+other values in the memory during the computation), the \emph{environment} of
+the program is saved and managed. The environment is defined as the set of
+variables that the program is managing. Every computation starts with an empty
+environment, that is filled during the computation with assignment expressions.
+At the end of the computation, the final environment represents the actual
+output of the program (IMP does \emph{not} provide any I/O primitives).
+
+\section{The Evaluation Strategy}
+
+For simplicity, the SIMPLI interpreter uses an \emph{eager} evaluation
+strategy. In other words, the interpreter evaluates the expressions as soon a
+they are encountered. This allows to simplify the implementation of the
+interpreter, while actually being a common choice for many other languages,
+like C++ \cite{Stroustrup2013}.
+
+Furthermore, the evaluation strategy for boolean expressions should be defined.
+In the SIMPLI interpreter, the boolean expressions' evaluation is \emph{short
+circuited}: supposing to have two boolean expressions $b_1$ and $b_2$ in
+composition using the operators \texttt{and} or \texttt{or}, the interpreter
+will not always evaluate both expressions, as defined in the following
+paragraphs.
+\begin{description}
+	\item[And ($\land$)] \hfill \\
+		Given the expression $b_1 \land b_2$, the expression $b_1$ is evaluated
+		first. If $b_1$ evaluates to the false value $\bot$, then $b_2$ is not
+		evaluated (in fact, $\forall b_2: \bot \land b_2 = \bot$).  Otherwise,
+		if $b_1$ evaluates to the truth value $\top$, then $b_2$ is evaluated
+		and will be the result of the whole evaluation (in fact, $\forall b_2:
+		\top\land b_2=b_2$).
+	\item[Or ($\vee$)] \hfill \\
+		Given the expression $b_1 \vee b_2$, the expression $b_1$ is evaluated
+		first. If $b_1$ evaluates to the truth value $\top$, then $b_2$ is not
+		evaluated (in fact, $\forall b_2: \top \vee b_2 = \top$).  Otherwise,
+		if $b_1$ evaluates to the false value $\bot$, then $b_2$ is evaluated
+		and will be the result of the whole evaluation (in fact, $\forall b_2:
+		\bot\vee b_2=b_2$).
+\end{description}
+
+A short circuited evaluation of boolean expressions allows a faster execution
+(potentially less operations are computed) and is as reliable as a non short
+circuited evaluation: in the IMP language, in fact, no expression (with the
+only exception being the assignment operation) have side effects, thus no
+command can depend on the result of the evaluation of the second boolean
+expression $b_2$.
+
+\section{The Modules of the Interpreter}
+
+The SIMPLI interpreter is made of four basic modules:
+\begin{itemize}
+	\item ``\textbf{Main}'' The module that holds the main entry point of the
+		interpreter.
+	\item ``\textbf{Cli}'' The module that defines the SIMPLI command line
+		interface.
+	\item ``\textbf{Environment}'' The module that defines the functions to
+		manage the computation environment.
+	\item ``\textbf{Parsers}'' The module that defines the actual parsers.
+\end{itemize}
+The relations between the various modules is represented in
+\autoref{fig:uml-design}. The ``Parsers'' module can be considered the most
+important module and will provide the function ``\texttt{eval}'' that, given a
+program, executes it and returns the final environment (starting, as already
+stated, from an empty environment).
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\umlbasiccomponent[x=5,y=0]{Parsers}
+		\umlbasiccomponent[x=0, y=-4]{Cli}
+		\umlbasiccomponent[x=5, y=-4]{Environment}
+		\umlbasiccomponent[x=0, y=0]{Main}
+
+		\umlVHVassemblyconnector[interface=environment]{Parsers}{Environment} 
+		\umlassemblyconnector[interface=eval]{Main}{Parsers}
+		\umlVHVassemblyconnector[interface={getInputProgram}]{Main}{Cli} 
+	\end{tikzpicture}
+	\caption{UML component diagram that represents the basic relations between the modules of the SIMPLI interpreter}
+	\label{fig:uml-design}
+\end{figure}
+
 \chapter{Implementation}
 
+In the following sections, the implementation of the SIMPLI interpreter will be
+discussed and explained. The entire code is also available in the
+\autoref{app:source}.
+\section{The Main Module}
+
+\lstinputlisting[firstline=1, lastline=1]{Main.hs}
+
+As already stated, the main module contains the definition of the ``main entry
+point'' of the SIMPLI interpreter. As it can be seen from
+\autoref{fig:uml-design} it uses the interfaces provided by the ``Parsers'' and
+``Cli'' modules.
+
+\lstinputlisting[firstline=2, lastline=3]{Main.hs}
+
+The main entry point is then defined. 
+\lstinputlisting[firstline=5, lastline=8]{Main.hs}
+
+The main function of the program is actually quite simple: its only job is to
+get the source code provided through the command line interface and evaluate it
+using the Parsers module. It then outputs to the standard output the final
+environment after the computation.
+
+\section{The Cli Module}
+
+\lstinputlisting[firstline=1, lastline=1]{Cli.hs}
+
+The Cli modules defines and parses the command line interface of the SIMPLI
+interpreter. It exports a single function,
+\lstinline|getInputProgram :: IO String|, that parses the command line
+arguments and returns a String (in the IO monad) containing the source code to
+be parsed.
+
+To do that, it uses a set of predefined standard libraries, where the only
+exception is the module ``\texttt{Paths_simpli}'', a module automatically
+generated by the \emph{Cabal} building system \cite{CabalTeam2020} that holds
+the package version.
+
+\lstinputlisting[firstline=2, lastline=8]{Cli.hs}
+
+It then defines two helper functions (that are not exported):
+\lstinline|printVersion| and \lstinline|printHelp|, both of type
+\lstinline|IO ()|, that respectively print the version of SIMPLI and the help
+message that explains the accepted command line arguments and options.
+
+\lstinputlisting[firstline=10, lastline=28]{Cli.hs}
+
+Then, the definition of the accepted options is provided. To the options listed
+here, two options are always added: ``\texttt{--help}'' and
+``\texttt{--version}'' that, respectively, print the help message and the
+interpreter's version.
+
+\lstinputlisting[firstline=30, lastline=30]{Cli.hs}
+
+After the accepted options have been defined, a set of ``default'' options is
+defined.
+
+\lstinputlisting[firstline=32, lastline=33]{Cli.hs}
+
+Then, the actual options are defined and mapped to the \lstinline|Options|
+record defined before. The function is defined in the IO monad to allow side
+effects, in order to simplify the definition of the ``help'' and ``version''
+options.
+
+\lstinputlisting[firstline=35, lastline=50]{Cli.hs}
+
+Finally, the actual exported function is defined. It gets the command line arguments using the standard function \lstinline|getArgs| and parses them using the standard function \lstinline|getOpt|. It eventually prints an error message and, if no errors occurred, it applies the default options. It then reads the source code from various sources (depending by the given arguments) in the following order:
+\begin{enumerate}
+	\item If a command is provided through ``\texttt{--command}'', then the
+		provided command is used as source code.
+	\item If a file is provided as the first argument, then the provided file's
+		content is used as source code.
+	\item If no command or file is specified, the source code is read from the
+		standard input.
+\end{enumerate}
+\lstinputlisting[firstline=52, lastline=70]{Cli.hs}
+
+\section{The Environment Module}
+\lstinputlisting[firstline=1, lastline=1]{Environment.hs}
+
+The Environment module defines how the environment is managed. It exports all of its content, described in the following paragraphs.
+
+The concept of ``variable'' is defined. A variable is seen as a record having a
+name (the identifier of the variable), a type (in this version of the
+interpreter, only integers are supported) and a value (the actual value
+contained in the variable).
+
+\lstinputlisting[firstline=3, lastline=6]{Environment.hs}
+
+Then, the \lstinline|Variable| type is defined as an instance of the class
+\lstinline|Show|, to customize the way a variable is converted to String
+(especially when printed as output).
+
+\lstinputlisting[firstline=8, lastline=10]{Environment.hs}
+
+Then, the environment itself is defined as a sequence of variables.
+
+\lstinputlisting[firstline=12, lastline=12]{Environment.hs}
+
+A function to modify an existing environment is then defined. Given an environment and a variable, it returns a new environment that is:
+\begin{itemize}
+	\item The old environment plus the variable if the variable is not already
+		in the environment.
+	\item The old environment having the updated variable if the variable was
+		already in the old environment (the previous value is then discarded
+		after the update).
+\end{itemize}
+\lstinputlisting[firstline=14, lastline=18]{Environment.hs}
+
+Finally, a function that searches a variable in an environment is provided.
+Given an environment and a string, it searches in the environment for a
+variable whose name is the given string and returns its value if the variable
+is in the environment.
+
+\lstinputlisting[firstline=20, lastline=24]{Environment.hs}
+
+\section{The Parsers Module}
+
+To implement the given specification, the ``Parsers'' module has
+been exploded into multiple sub-modules, described in
+\autoref{fig:parsers-submodules}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\begin{umlcomponent}{Parsers}
+			\umlbasiccomponent[x=0,y=0]{Aexp}
+			\umlbasiccomponent[x=4,y=0]{Fundamentals}
+			\umlbasiccomponent[x=8,y=0]{Bexp}
+			\umlbasiccomponent[x=0,y=-3]{Com}
+			\umlbasiccomponent[x=4,y=-3]{Core}
+			\umlbasiccomponent[x=8,y=-3]{Environment}
+			\umlbasiccomponent[x=4,y=-6]{Readers}
+		\end{umlcomponent}
+	\end{tikzpicture}
+	\caption{UML component diagram that represents the sub-modules of the module ``Parsers''}
+	\label{fig:parsers-submodules}
+\end{figure}
+
+\subsection{The Parsers Main Module}
+\lstinputlisting[firstline=1, lastline=1]{Parsers.hs}
+
+The outer Parsers module is the one that provides the interface used by the
+other modules, so before going into the details of its components, a few words
+on it should be given.
+
+First of all, the interfaces of some of its components (\texttt{Com} and
+\texttt{Core}) are imported, alongside with the \texttt{Environment} module
+(see \autoref{fig:uml-design}) and the standard \texttt{Data.List} module (that
+provides useful functions on lists).
+
+\lstinputlisting[firstline=3, lastline=7]{Parsers.hs}
+
+Then, a function to remove comments from the source code is provided. It removes, for each line, all characters after an hash symbol (see \autoref{sec:additions}).
+
+\lstinputlisting[firstline=8, lastline=15]{Parsers.hs}
+
+After that, a function to remove unnecessary white space is defined. This makes
+the implementation of the parsers simpler, because it allows to assume that no
+unnecessary characters are in the input string.
+
+\lstinputlisting[firstline=17, lastline=28]{Parsers.hs}
+
+Finally, the exported \lstinline|eval| function is provided. Here the actual
+execution takes place: it starts from an empty environment and parses a program
+(given in input as its only parameter) and it returns the final environment,
+modified by the completed execution. It handles errors in the input by simply
+raising exceptions through the Haskell's standard \lstinline|error| function.
+It should be noted that the function removes all comment and white space from
+the given program (in this exact order) using the previously defined functions.
+
+\lstinputlisting[firstline=30, lastline=34]{Parsers.hs}
+
+\subsection{The Parsers Core Module}
+\lstinputlisting[firstline=1, lastline=1]{Parsers/Core.hs}
+
+This module defines all the Core variable types and functions used by all other
+modules. It starts by defining a Parser type, defining it as an instance of the
+classes \lstinline|Functor|, \lstinline|Applicative|, \lstinline|Monad| and
+\lstinline|Alternative|.
+
+\lstinputlisting[firstline=5, lastline=5]{Parsers/Core.hs}
+\lstinputlisting[firstline=11, lastline=15]{Parsers/Core.hs}
+\lstinputlisting[firstline=17, lastline=24]{Parsers/Core.hs}
+\lstinputlisting[firstline=26, lastline=30]{Parsers/Core.hs}
+\lstinputlisting[firstline=32, lastline=39]{Parsers/Core.hs}
+
+It also defines a \lstinline|parse| function that is used to actually apply a
+parser given an environment.
+\lstinputlisting[firstline=7, lastline=8]{Parsers/Core.hs}
+
+\subsection{The Parsers Fundamentals Module}
+\lstinputlisting[firstline=1, lastline=1]{Parsers/Fundamentals.hs}
+
+This modules defines some basic parsers that will be used by the parsers for
+$\mathrm{Aexp}$, $\mathrm{Bexp}$ and $\mathrm{Com}$. It starts by importing the
+core parsers' definitions and some standard libraries.
+
+\lstinputlisting[firstline=3, lastline=6]{Parsers/Fundamentals.hs}
+
+And then it defines some useful basic parsers:
+\begin{description}
+	\item[item] A parser that reads a single character and always succeeds if
+		it's applied to a non-empty string.
+	\item[failure] A parser that always fails.
+	\item[return] A parser that always succeed, returning a value without
+		consuming any input.
+	\item[satisfies] A parser that reads a character and succeeds if the
+		character satisfies a predicate (given as its first parameter).
+	\item[symbol] A parser that reads a symbol or a keyword.
+\end{description}
+
+\lstinputlisting[firstline=8, lastline=34]{Parsers/Fundamentals.hs}
+
+It then defines the parsers for natural numbers by simply applying the grammar
+defined in \autoref{sec:grammar-numbers}.
+
+\lstinputlisting[firstline=36, lastline=50]{Parsers/Fundamentals.hs}
+
+Finally, it defines the parsers for identifiers by simply applying the grammar
+defined in \autoref{sec:grammar-id}.
+
+\lstinputlisting[firstline=52, lastline=93]{Parsers/Fundamentals.hs}
+
+\subsection{The Parsers Environment Module}
+\lstinputlisting[firstline=1, lastline=1]{Parsers/Environment.hs}
+
+This module provides the other Parsers a simple interface to deal with the
+environment management, while still being able of using the functions inside
+``\emph{do-blocks}''. To do that, it uses the Environment module and the core
+parsers' definitions.
+
+\lstinputlisting[firstline=2, lastline=3]{Parsers/Environment.hs}
+
+It then provides a simple function to update an environment given a variable.
+This basically is the Parsers-monad representation of the function
+\lstinline|modifyEnv| provided in the Environment module.
+
+\lstinputlisting[firstline=5, lastline=6]{Parsers/Environment.hs}
+
+Finally it provides a simple function to read a variable value from an
+environment.  This basically is the Parsers-monad representation of the
+function \lstinline|searchVariable| provided in the Environment module.
+
+\lstinputlisting[firstline=8, lastline=11]{Parsers/Environment.hs}
+
+\subsection{The Parsers Aexp Module}
+\lstinputlisting[firstline=1, lastline=1]{Parsers/Aexp.hs}
+
+This modules provide a parser \lstinline|aexp| for the $\mathrm{Aexp}$
+expressions. It uses the other parsers modules, as follows.
+
+\lstinputlisting[firstline=3, lastline=7]{Parsers/Aexp.hs}
+
+It then provides the parser for the arithmetical expressions by simply following
+the grammar given in \autoref{sec:grammar-aexp}.
+
+\lstinputlisting[firstline=9]{Parsers/Aexp.hs}
+
+\subsection{The Parsers Bexp Module}
+\lstinputlisting[firstline=1, lastline=1]{Parsers/Bexp.hs}
+
+This modules provide a parser \lstinline|bexp| for the $\mathrm{Bexp}$
+expressions. It uses the other parsers modules, as follows.
+
+\lstinputlisting[firstline=2, lastline=7]{Parsers/Bexp.hs}
+
+It then provides the parser for the boolean expressions by simply following the
+grammar given in \autoref{sec:grammar-bexp}.
+
+\lstinputlisting[firstline=9]{Parsers/Bexp.hs}
+
+\subsection{The Parsers Com Module}
+\lstinputlisting[firstline=1, lastline=1]{Parsers/Com.hs}
+
+This modules provide a parser \lstinline|program| for the $\mathrm{Com}$
+commands. It uses the other parsers modules, as follows.
+
+\lstinputlisting[firstline=3, lastline=12]{Parsers/Com.hs}
+
+It then provides the parser for the boolean expressions by simply following the
+grammar given in \autoref{sec:grammar-com}.
+
+\lstinputlisting[firstline=14]{Parsers/Com.hs}
+
+It should be noted that, to deal with the ``while-do'' construct, the parser
+simply repeats the while by prepending it to the input string until the
+condition is false (function \lstinline|repeatWhile|).
+
+\subsection{The Parsers Readers Module}
+\lstinputlisting[firstline=1, lastline=1]{Parsers/Readers.hs}
+
+This module provides the same exact functions as the \texttt{Aexp},
+\texttt{Bexp} and \texttt{Com} modules but changes their definitions in a way
+such that no expression is actually executed but the read code is returned.
+This is used by other functions in other modules, for example to ``skip''
+sections of code.
+
+\lstinputlisting[firstline=2]{Parsers/Readers.hs}
 \chapter{Usage Examples}
 
 In the following sections, various examples of how to use the SIMPLI
@@ -200,5 +659,55 @@ Parsers> eval "x := 3; y := x + 4"
 [x = 3,y = 7]
 \end{lstlisting}
 
+\appendix
+\chapter{SIMPLI's Source Code}\label{app:source}
+
+In this appendix, all the source code of the various source file is given. All
+the source code is available as a Git repository on GitHub as
+\href{https://github.com/espositoandrea/simpli}{\texttt{espositoandrea/simpli}}.
+
+SIMPLI is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License version 3 as published by the Free
+Software Foundation. You should have received a copy of the GNU General Public
+License along with this program. If not, see
+\href{https://www.gnu.org/licenses/gpl-3.0.html}{\texttt{www.gnu.org/licenses/gpl-3.0.html}}.
+
+
+\section{Main.hs}
+\lstinputlisting{Main.hs}
+
+\section{Cli.hs}
+\lstinputlisting{Cli.hs}
+
+\section{Environment.hs}
+\lstinputlisting{Environment.hs}
+
+\section{Parsers}
+\subsection{Parsers.hs}
+\lstinputlisting{Parsers.hs}
+
+\subsection{Parsers/Core.hs}
+\lstinputlisting{Parsers/Core.hs}
+
+\subsection{Parsers/Fundamentals.hs}
+\lstinputlisting{Parsers/Fundamentals.hs}
+
+\subsection{Parsers/Environment.hs}
+\lstinputlisting{Parsers/Environment.hs}
+
+\subsection{Parsers/Aexp.hs}
+\lstinputlisting{Parsers/Aexp.hs}
+
+\subsection{Parsers/Bexp.hs}
+\lstinputlisting{Parsers/Bexp.hs}
+
+\subsection{Parsers/Com.hs}
+\lstinputlisting{Parsers/Com.hs}
+
+\subsection{Parsers/Readers.hs}
+\lstinputlisting{Parsers/Readers.hs}
+
+\backmatter
 \printbibliography
+
 \end{document}

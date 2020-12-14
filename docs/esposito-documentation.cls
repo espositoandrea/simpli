@@ -11,6 +11,7 @@
 \ProcessOptions\relax
 
 \RequirePackage[inner=3.5cm,outer=3cm,top=2.5cm,bottom=2.5cm]{geometry}
+\RequirePackage[indent]{parskip}
 \RequirePackage{hyperref}
 \RequirePackage{float}
 \RequirePackage{mathtools}
@@ -21,6 +22,7 @@
 \RequirePackage[htt]{hyphenat}
 \RequirePackage{amssymb}
 \RequirePackage[framemethod=tikz]{mdframed}
+% \RequirePackage[Bjarne]{fncychap}
 \RequirePackage{amsthm}
 \RequirePackage{palatino}
 \RequirePackage{listings}
@@ -44,12 +46,12 @@
 
 \renewcommand\theadfont{\bfseries}
 
-\titleformat{\chapter}[hang]
-	{\normalfont\bfseries\huge\raggedright}
-	{\thechapter. }
-	{15pt}
-	{}
-\titlespacing*{\chapter}{0pt}{-5ex}{3ex}
+% \titleformat{\chapter}[hang]
+	% {\normalfont\bfseries\huge\raggedright}
+	% {\thechapter. }
+	% {15pt}
+	% {}
+% \titlespacing*{\chapter}{0pt}{-5ex}{3ex}
 
 
 \setcounter{tocdepth}{3}
