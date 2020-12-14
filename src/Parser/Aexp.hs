@@ -1,10 +1,10 @@
-module Parsers.Aexp (aexp) where
+module Parser.Aexp (aexp) where
 
 import           Control.Applicative
-import           Parsers.Core
-import           Parsers.Environment
-import           Parsers.Fundamentals
-import           Prelude              hiding (return)
+import           Parser.Core
+import           Parser.Environment
+import           Parser.Fundamentals
+import           Prelude             hiding (return)
 
 aexp :: Parser Int
 aexp = (do t <- aterm

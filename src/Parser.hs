@@ -1,9 +1,9 @@
-module Parsers (eval) where
+module Parser (eval) where
 
 import           Data.List
-import           Environment  (Env)
-import           Parsers.Com  (program)
-import           Parsers.Core (parse)
+import           Environment (Env)
+import           Parser.Com  (program)
+import           Parser.Core (parse)
 
 removeComments :: String -> String
 removeComments [] = []

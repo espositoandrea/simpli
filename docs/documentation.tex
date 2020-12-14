@@ -269,10 +269,10 @@ The SIMPLI interpreter is made of four basic modules:
 		interface.
 	\item ``\textbf{Environment}'' The module that defines the functions to
 		manage the computation environment.
-	\item ``\textbf{Parsers}'' The module that defines the actual parsers.
+	\item ``\textbf{Parser}'' The module that defines the actual parser.
 \end{itemize}
 The relations between the various modules is represented in
-\autoref{fig:uml-design}. The ``Parsers'' module can be considered the most
+\autoref{fig:uml-design}. The ``Parser'' module can be considered the most
 important module and will provide the function ``\texttt{eval}'' that, given a
 program, executes it and returns the final environment (starting, as already
 stated, from an empty environment).
@@ -280,13 +280,13 @@ stated, from an empty environment).
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}
-		\umlbasiccomponent[x=5,y=0]{Parsers}
+		\umlbasiccomponent[x=5,y=0]{Parser}
 		\umlbasiccomponent[x=0, y=-4]{Cli}
 		\umlbasiccomponent[x=5, y=-4]{Environment}
 		\umlbasiccomponent[x=0, y=0]{Main}
 
-		\umlVHVassemblyconnector[interface=environment]{Parsers}{Environment} 
-		\umlassemblyconnector[interface=eval]{Main}{Parsers}
+		\umlVHVassemblyconnector[interface=environment]{Parser}{Environment} 
+		\umlassemblyconnector[interface=eval]{Main}{Parser}
 		\umlVHVassemblyconnector[interface={getInputProgram}]{Main}{Cli} 
 	\end{tikzpicture}
 	\caption{UML component diagram that represents the basic relations between the modules of the SIMPLI interpreter}
@@ -304,7 +304,7 @@ discussed and explained. The entire code is also available in the
 
 As already stated, the main module contains the definition of the ``main entry
 point'' of the SIMPLI interpreter. As it can be seen from
-\autoref{fig:uml-design} it uses the interfaces provided by the ``Parsers'' and
+\autoref{fig:uml-design} it uses the interfaces provided by the ``Parser'' and
 ``Cli'' modules.
 
 \lstinputlisting[firstline=2, lastline=3]{Main.hs}
@@ -314,7 +314,7 @@ The main entry point is then defined.
 
 The main function of the program is actually quite simple: its only job is to
 get the source code provided through the command line interface and evaluate it
-using the Parsers module. It then outputs to the standard output the final
+using the Parser module. It then outputs to the standard output the final
 environment after the computation.
 
 \section{The Cli Module}
@@ -410,16 +410,16 @@ is in the environment.
 
 \lstinputlisting[firstline=20, lastline=24]{Environment.hs}
 
-\section{The Parsers Module}
+\section{The Parser Module}
 
-To implement the given specification, the ``Parsers'' module has
-been exploded into multiple sub-modules, described in
-\autoref{fig:parsers-submodules}.
+To implement the given specification, the ``Parser'' module has been exploded
+into multiple sub-modules, described in
+\autoref{fig:parser-submodules}.
 
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}
-		\begin{umlcomponent}{Parsers}
+		\begin{umlcomponent}{Parser}
 			\umlbasiccomponent[x=0,y=0]{Aexp}
 			\umlbasiccomponent[x=4,y=0]{Fundamentals}
 			\umlbasiccomponent[x=8,y=0]{Bexp}
@@ -429,14 +429,14 @@ been exploded into multiple sub-modules, described in
 			\umlbasiccomponent[x=4,y=-6]{Readers}
 		\end{umlcomponent}
 	\end{tikzpicture}
-	\caption{UML component diagram that represents the sub-modules of the module ``Parsers''}
-	\label{fig:parsers-submodules}
+	\caption{UML component diagram that represents the sub-modules of the module ``Parser''}
+	\label{fig:parser-submodules}
 \end{figure}
 
-\subsection{The Parsers Main Module}
-\lstinputlisting[firstline=1, lastline=1]{Parsers.hs}
+\subsection{The Parser Main Module}
+\lstinputlisting[firstline=1, lastline=1]{Parser.hs}
 
-The outer Parsers module is the one that provides the interface used by the
+The outer Parser module is the one that provides the interface used by the
 other modules, so before going into the details of its components, a few words
 on it should be given.
 
@@ -445,17 +445,17 @@ First of all, the interfaces of some of its components (\texttt{Com} and
 (see \autoref{fig:uml-design}) and the standard \texttt{Data.List} module (that
 provides useful functions on lists).
 
-\lstinputlisting[firstline=3, lastline=7]{Parsers.hs}
+\lstinputlisting[firstline=3, lastline=7]{Parser.hs}
 
 Then, a function to remove comments from the source code is provided. It removes, for each line, all characters after an hash symbol (see \autoref{sec:additions}).
 
-\lstinputlisting[firstline=8, lastline=15]{Parsers.hs}
+\lstinputlisting[firstline=8, lastline=15]{Parser.hs}
 
 After that, a function to remove unnecessary white space is defined. This makes
 the implementation of the parsers simpler, because it allows to assume that no
 unnecessary characters are in the input string.
 
-\lstinputlisting[firstline=17, lastline=28]{Parsers.hs}
+\lstinputlisting[firstline=17, lastline=28]{Parser.hs}
 
 Finally, the exported \lstinline|eval| function is provided. Here the actual
 execution takes place: it starts from an empty environment and parses a program
@@ -465,34 +465,34 @@ raising exceptions through the Haskell's standard \lstinline|error| function.
 It should be noted that the function removes all comment and white space from
 the given program (in this exact order) using the previously defined functions.
 
-\lstinputlisting[firstline=30, lastline=34]{Parsers.hs}
+\lstinputlisting[firstline=30, lastline=34]{Parser.hs}
 
-\subsection{The Parsers Core Module}
-\lstinputlisting[firstline=1, lastline=1]{Parsers/Core.hs}
+\subsection{The Parser Core Module}
+\lstinputlisting[firstline=1, lastline=1]{Parser/Core.hs}
 
 This module defines all the Core variable types and functions used by all other
 modules. It starts by defining a Parser type, defining it as an instance of the
 classes \lstinline|Functor|, \lstinline|Applicative|, \lstinline|Monad| and
 \lstinline|Alternative|.
 
-\lstinputlisting[firstline=5, lastline=5]{Parsers/Core.hs}
-\lstinputlisting[firstline=11, lastline=15]{Parsers/Core.hs}
-\lstinputlisting[firstline=17, lastline=24]{Parsers/Core.hs}
-\lstinputlisting[firstline=26, lastline=30]{Parsers/Core.hs}
-\lstinputlisting[firstline=32, lastline=39]{Parsers/Core.hs}
+\lstinputlisting[firstline=5, lastline=5]{Parser/Core.hs}
+\lstinputlisting[firstline=11, lastline=15]{Parser/Core.hs}
+\lstinputlisting[firstline=17, lastline=24]{Parser/Core.hs}
+\lstinputlisting[firstline=26, lastline=30]{Parser/Core.hs}
+\lstinputlisting[firstline=32, lastline=39]{Parser/Core.hs}
 
 It also defines a \lstinline|parse| function that is used to actually apply a
 parser given an environment.
-\lstinputlisting[firstline=7, lastline=8]{Parsers/Core.hs}
+\lstinputlisting[firstline=7, lastline=8]{Parser/Core.hs}
 
-\subsection{The Parsers Fundamentals Module}
-\lstinputlisting[firstline=1, lastline=1]{Parsers/Fundamentals.hs}
+\subsection{The Parser Fundamentals Module}
+\lstinputlisting[firstline=1, lastline=1]{Parser/Fundamentals.hs}
 
 This modules defines some basic parsers that will be used by the parsers for
 $\mathrm{Aexp}$, $\mathrm{Bexp}$ and $\mathrm{Com}$. It starts by importing the
 core parsers' definitions and some standard libraries.
 
-\lstinputlisting[firstline=3, lastline=6]{Parsers/Fundamentals.hs}
+\lstinputlisting[firstline=3, lastline=6]{Parser/Fundamentals.hs}
 
 And then it defines some useful basic parsers:
 \begin{description}
@@ -506,85 +506,85 @@ And then it defines some useful basic parsers:
 	\item[symbol] A parser that reads a symbol or a keyword.
 \end{description}
 
-\lstinputlisting[firstline=8, lastline=34]{Parsers/Fundamentals.hs}
+\lstinputlisting[firstline=8, lastline=34]{Parser/Fundamentals.hs}
 
 It then defines the parsers for natural numbers by simply applying the grammar
 defined in \autoref{sec:grammar-numbers}.
 
-\lstinputlisting[firstline=36, lastline=50]{Parsers/Fundamentals.hs}
+\lstinputlisting[firstline=36, lastline=50]{Parser/Fundamentals.hs}
 
 Finally, it defines the parsers for identifiers by simply applying the grammar
 defined in \autoref{sec:grammar-id}.
 
-\lstinputlisting[firstline=52, lastline=93]{Parsers/Fundamentals.hs}
+\lstinputlisting[firstline=52, lastline=93]{Parser/Fundamentals.hs}
 
-\subsection{The Parsers Environment Module}
-\lstinputlisting[firstline=1, lastline=1]{Parsers/Environment.hs}
+\subsection{The Parser Environment Module}
+\lstinputlisting[firstline=1, lastline=1]{Parser/Environment.hs}
 
-This module provides the other Parsers a simple interface to deal with the
+This module provides the other Parser a simple interface to deal with the
 environment management, while still being able of using the functions inside
 ``\emph{do-blocks}''. To do that, it uses the Environment module and the core
 parsers' definitions.
 
-\lstinputlisting[firstline=2, lastline=3]{Parsers/Environment.hs}
+\lstinputlisting[firstline=2, lastline=3]{Parser/Environment.hs}
 
 It then provides a simple function to update an environment given a variable.
-This basically is the Parsers-monad representation of the function
+This basically is the Parser-monad representation of the function
 \lstinline|modifyEnv| provided in the Environment module.
 
-\lstinputlisting[firstline=5, lastline=6]{Parsers/Environment.hs}
+\lstinputlisting[firstline=5, lastline=6]{Parser/Environment.hs}
 
 Finally it provides a simple function to read a variable value from an
-environment.  This basically is the Parsers-monad representation of the
+environment.  This basically is the Parser-monad representation of the
 function \lstinline|searchVariable| provided in the Environment module.
 
-\lstinputlisting[firstline=8, lastline=11]{Parsers/Environment.hs}
+\lstinputlisting[firstline=8, lastline=11]{Parser/Environment.hs}
 
-\subsection{The Parsers Aexp Module}
-\lstinputlisting[firstline=1, lastline=1]{Parsers/Aexp.hs}
+\subsection{The Parser Aexp Module}
+\lstinputlisting[firstline=1, lastline=1]{Parser/Aexp.hs}
 
 This modules provide a parser \lstinline|aexp| for the $\mathrm{Aexp}$
 expressions. It uses the other parsers modules, as follows.
 
-\lstinputlisting[firstline=3, lastline=7]{Parsers/Aexp.hs}
+\lstinputlisting[firstline=3, lastline=7]{Parser/Aexp.hs}
 
 It then provides the parser for the arithmetical expressions by simply following
 the grammar given in \autoref{sec:grammar-aexp}.
 
-\lstinputlisting[firstline=9]{Parsers/Aexp.hs}
+\lstinputlisting[firstline=9]{Parser/Aexp.hs}
 
-\subsection{The Parsers Bexp Module}
-\lstinputlisting[firstline=1, lastline=1]{Parsers/Bexp.hs}
+\subsection{The Parser Bexp Module}
+\lstinputlisting[firstline=1, lastline=1]{Parser/Bexp.hs}
 
 This modules provide a parser \lstinline|bexp| for the $\mathrm{Bexp}$
 expressions. It uses the other parsers modules, as follows.
 
-\lstinputlisting[firstline=2, lastline=7]{Parsers/Bexp.hs}
+\lstinputlisting[firstline=2, lastline=7]{Parser/Bexp.hs}
 
 It then provides the parser for the boolean expressions by simply following the
 grammar given in \autoref{sec:grammar-bexp}.
 
-\lstinputlisting[firstline=9]{Parsers/Bexp.hs}
+\lstinputlisting[firstline=9]{Parser/Bexp.hs}
 
-\subsection{The Parsers Com Module}
-\lstinputlisting[firstline=1, lastline=1]{Parsers/Com.hs}
+\subsection{The Parser Com Module}
+\lstinputlisting[firstline=1, lastline=1]{Parser/Com.hs}
 
 This modules provide a parser \lstinline|program| for the $\mathrm{Com}$
 commands. It uses the other parsers modules, as follows.
 
-\lstinputlisting[firstline=3, lastline=12]{Parsers/Com.hs}
+\lstinputlisting[firstline=3, lastline=12]{Parser/Com.hs}
 
 It then provides the parser for the boolean expressions by simply following the
 grammar given in \autoref{sec:grammar-com}.
 
-\lstinputlisting[firstline=14]{Parsers/Com.hs}
+\lstinputlisting[firstline=14]{Parser/Com.hs}
 
 It should be noted that, to deal with the ``while-do'' construct, the parser
 simply repeats the while by prepending it to the input string until the
 condition is false (function \lstinline|repeatWhile|).
 
-\subsection{The Parsers Readers Module}
-\lstinputlisting[firstline=1, lastline=1]{Parsers/Readers.hs}
+\subsection{The Parser Readers Module}
+\lstinputlisting[firstline=1, lastline=1]{Parser/Readers.hs}
 
 This module provides the same exact functions as the \texttt{Aexp},
 \texttt{Bexp} and \texttt{Com} modules but changes their definitions in a way
@@ -592,7 +592,7 @@ such that no expression is actually executed but the read code is returned.
 This is used by other functions in other modules, for example to ``skip''
 sections of code.
 
-\lstinputlisting[firstline=2]{Parsers/Readers.hs}
+\lstinputlisting[firstline=2]{Parser/Readers.hs}
 \chapter{Usage Examples}
 
 In the following sections, various examples of how to use the SIMPLI
@@ -641,21 +641,21 @@ $ simpli -c "x := 3; y := x + 4"
 \section{Using It as a Library}
 
 To use SIMPLI as a library (or in Hugs), the only module that needs to be
-imported is the module ``\texttt{Parsers}'', that contains and exports the
+imported is the module ``\texttt{Parser}'', that contains and exports the
 definition of the function \texttt{eval} of type
 \lstinline|eval :: String -> Env|.
 
 For example, to use it in an Hugs console, start the Hugs console in the
-directory containing the file ``\texttt{Parsers.hs}'' and load the file using
+directory containing the file ``\texttt{Parser.hs}'' and load the file using
 \texttt{:load}. Then you can run the interpreter by using the function
 \texttt{eval}, where the required argument is the code to be executed.
 
 In the following listing, an example of how to use SIMPLI in Hugs is provided
-(supposing Hugs was started in the same directory as ``\texttt{Parsers}'').
+(supposing Hugs was started in the same directory as ``\texttt{Parser}'').
 
 \begin{lstlisting}[language=sh,numbers=none]
-Hugs> :load Parsers
-Parsers> eval "x := 3; y := x + 4"
+Hugs> :load Parser
+Parser> eval "x := 3; y := x + 4"
 [x = 3,y = 7]
 \end{lstlisting}
 
@@ -682,30 +682,30 @@ License along with this program. If not, see
 \section{Environment.hs}
 \lstinputlisting{Environment.hs}
 
-\section{Parsers}
-\subsection{Parsers.hs}
-\lstinputlisting{Parsers.hs}
+\section{Parser}
+\subsection{Parser.hs}
+\lstinputlisting{Parser.hs}
 
-\subsection{Parsers/Core.hs}
-\lstinputlisting{Parsers/Core.hs}
+\subsection{Parser/Core.hs}
+\lstinputlisting{Parser/Core.hs}
 
-\subsection{Parsers/Fundamentals.hs}
-\lstinputlisting{Parsers/Fundamentals.hs}
+\subsection{Parser/Fundamentals.hs}
+\lstinputlisting{Parser/Fundamentals.hs}
 
-\subsection{Parsers/Environment.hs}
-\lstinputlisting{Parsers/Environment.hs}
+\subsection{Parser/Environment.hs}
+\lstinputlisting{Parser/Environment.hs}
 
-\subsection{Parsers/Aexp.hs}
-\lstinputlisting{Parsers/Aexp.hs}
+\subsection{Parser/Aexp.hs}
+\lstinputlisting{Parser/Aexp.hs}
 
-\subsection{Parsers/Bexp.hs}
-\lstinputlisting{Parsers/Bexp.hs}
+\subsection{Parser/Bexp.hs}
+\lstinputlisting{Parser/Bexp.hs}
 
-\subsection{Parsers/Com.hs}
-\lstinputlisting{Parsers/Com.hs}
+\subsection{Parser/Com.hs}
+\lstinputlisting{Parser/Com.hs}
 
-\subsection{Parsers/Readers.hs}
-\lstinputlisting{Parsers/Readers.hs}
+\subsection{Parser/Readers.hs}
+\lstinputlisting{Parser/Readers.hs}
 
 \backmatter
 \printbibliography

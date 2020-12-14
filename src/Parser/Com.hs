@@ -1,15 +1,15 @@
-module Parsers.Com (program) where
+module Parser.Com (program) where
 
 import           Control.Applicative
-import           Control.Monad        hiding (return)
+import           Control.Monad       hiding (return)
 import           Environment
-import           Parsers.Aexp
-import           Parsers.Bexp
-import           Parsers.Core
-import           Parsers.Environment
-import           Parsers.Fundamentals
-import qualified Parsers.Readers      as R
-import           Prelude              hiding (return)
+import           Parser.Aexp
+import           Parser.Bexp
+import           Parser.Core
+import           Parser.Environment
+import           Parser.Fundamentals
+import qualified Parser.Readers      as R
+import           Prelude             hiding (return)
 
 program :: Parser String
 program = (do command

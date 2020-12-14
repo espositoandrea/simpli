@@ -1,6 +1,6 @@
-module Parsers.Environment (updateEnv, readVariable) where
+module Parser.Environment (updateEnv, readVariable) where
 import           Environment
-import           Parsers.Core
+import           Parser.Core
 
 updateEnv :: Variable -> Parser String
 updateEnv var = P(\env input -> Just (modifyEnv env var, "", input))

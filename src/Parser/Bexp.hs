@@ -1,10 +1,10 @@
-module Parsers.Bexp (bexp) where
+module Parser.Bexp (bexp) where
 import           Control.Applicative
-import           Parsers.Aexp         (aexp)
-import           Parsers.Core
-import           Parsers.Fundamentals
-import qualified Parsers.Readers      as R
-import           Prelude              hiding (return)
+import           Parser.Aexp         (aexp)
+import           Parser.Core
+import           Parser.Fundamentals
+import qualified Parser.Readers      as R
+import           Prelude             hiding (return)
 
 bexp :: Parser Bool
 bexp = (do x <- bterm

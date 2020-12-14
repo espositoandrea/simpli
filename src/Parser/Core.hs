@@ -1,4 +1,4 @@
-module Parsers.Core (Parser (..), parse) where
+module Parser.Core (Parser (..), parse) where
 import           Control.Applicative
 import           Environment
 
