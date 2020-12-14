@@ -15,7 +15,7 @@ author:              Andrea Esposito <a.esposito39@studenti.uniba.it>
 maintainer:          Andrea Esposito <a.esposito39@studenti.uniba.it>
 category:            Development
 build-type:          Simple
-extra-source-files:  README.md docs/documentation.pdf
+extra-source-files:  README.md docs/documentation.pdf docs/presentation.pdf
 
 executable simpli
   main-is:             Main.hs
