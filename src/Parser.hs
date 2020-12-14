@@ -19,7 +19,7 @@ removeWhitespace [] = []
 removeWhitespace xs = foldl f "" (words xs)
                         where
                           f = \x y -> if (any (`isPrefixOf` y) ["else", "end"])
-                                          && not (";" `isPrefixOf` x)
+                                          && not (";" `isSuffixOf` x)
                                         then x ++";"++y
                                         else if any (`isSuffixOf` x) ["while", "if", "else"]
                                         then x ++ " " ++ y
