@@ -21,6 +21,13 @@ printVersion = do
 printHelp :: IO()
 printHelp = do
   prg <- getProgName
+  putStrLn $ "     _______. __  .___  ___. .______    __       __  \n" ++
+             "    /       ||  | |   \\/   | |   _  \\  |  |     |  | \n" ++
+             "   |   (----`|  | |  \\  /  | |  |_)  | |  |     |  | \n" ++
+             "    \\   \\    |  | |  |\\/|  | |   ___/  |  |     |  | \n" ++
+             ".----)   |   |  | |  |  |  | |  |      |  `----.|  | \n" ++
+             "|_______/    |__| |__|  |__| | _|      |_______||__| \n" ++
+             "\n"
   putStr $ "Usage: " ++ prg ++ " [options ...] [FILE | -c COMMAND]\n" ++
     "Launches the interpreter for the IMP Language using FILE as source.\n" ++
     "If FILE is not provided, the source code is read from stdin.\n" ++

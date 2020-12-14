@@ -19,7 +19,7 @@ failure = P(\_ _ -> Nothing)
 -- |A parser that always succeeds returning the value v without consuming any
 -- input
 return :: a -> Parser a
-return v = P(\env input -> Just (env, v, input))
+return v = pure v -- renaming the Applicative class function "pure"
 
 satisfies :: (Char -> Bool) -> Parser Char
 satisfies p = do x <- item
