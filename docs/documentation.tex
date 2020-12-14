@@ -239,17 +239,18 @@ paragraphs.
 	\item[And ($\land$)] \hfill \\
 		Given the expression $b_1 \land b_2$, the expression $b_1$ is evaluated
 		first. If $b_1$ evaluates to the false value $\bot$, then $b_2$ is not
-		evaluated (in fact, $\forall b_2: \bot \land b_2 = \bot$).  Otherwise,
-		if $b_1$ evaluates to the truth value $\top$, then $b_2$ is evaluated
-		and will be the result of the whole evaluation (in fact, $\forall b_2:
-		\top\land b_2=b_2$).
+		evaluated and the final result will be the false value $\bot$ (in fact,
+		$\forall b_2: \bot \land b_2 = \bot$).  Otherwise, if $b_1$ evaluates
+		to the truth value $\top$, then $b_2$ is evaluated and will be the
+		result of the whole evaluation (in fact, $\forall b_2: \top\land
+		b_2=b_2$).
 	\item[Or ($\vee$)] \hfill \\
 		Given the expression $b_1 \vee b_2$, the expression $b_1$ is evaluated
 		first. If $b_1$ evaluates to the truth value $\top$, then $b_2$ is not
-		evaluated (in fact, $\forall b_2: \top \vee b_2 = \top$).  Otherwise,
-		if $b_1$ evaluates to the false value $\bot$, then $b_2$ is evaluated
-		and will be the result of the whole evaluation (in fact, $\forall b_2:
-		\bot\vee b_2=b_2$).
+		evaluated and the final result will be the truth value $\top$ (in fact,
+		$\forall b_2: \top \vee b_2 = \top$).  Otherwise, if $b_1$ evaluates to
+		the false value $\bot$, then $b_2$ is evaluated and will be the result
+		of the whole evaluation (in fact, $\forall b_2: \bot\vee b_2=b_2$).
 \end{description}
 
 A short circuited evaluation of boolean expressions allows a faster execution
@@ -465,7 +466,7 @@ raising exceptions through the Haskell's standard \lstinline|error| function.
 It should be noted that the function removes all comment and white space from
 the given program (in this exact order) using the previously defined functions.
 
-\lstinputlisting[firstline=30, lastline=34]{Parser.hs}
+\lstinputlisting[firstline=30]{Parser.hs}
 
 \subsection{The Parser Core Module}
 \lstinputlisting[firstline=1, lastline=1]{Parser/Core.hs}
