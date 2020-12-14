@@ -1,7 +1,6 @@
 module Parsers.Readers where
 import           Control.Applicative
 import           Parsers.Core
-import           Parsers.Environment
 import           Parsers.Fundamentals
 import           Prelude              hiding (return)
 
