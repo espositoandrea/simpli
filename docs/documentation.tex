@@ -593,6 +593,16 @@ This is used by other functions in other modules, for example to ``skip''
 sections of code.
 
 \lstinputlisting[firstline=2]{Parser/Readers.hs}
+
+\section{Testing of the Implementation}
+
+The provided implementation has been tested on all the commands
+($\mathrm{Com}$) by applying the rules of the generative grammar. All the test
+cases have been collected inside a unit-test module, \texttt{MainTest.hs}, that
+completed the execution successfully on all test cases.
+
+In the \autoref{app:unit-tests} the source code of the unit-test module is
+provided.
 \chapter{Usage Examples}
 
 In the following sections, various examples of how to use the SIMPLI
@@ -706,6 +716,9 @@ License along with this program. If not, see
 
 \subsection{Parser/Readers.hs}
 \lstinputlisting{Parser/Readers.hs}
+
+\section{Unit Tests}\label{app:unit-tests}
+\lstinputlisting{../test/MainTest.hs}
 
 \backmatter
 \printbibliography

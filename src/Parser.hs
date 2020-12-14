@@ -28,8 +28,10 @@ removeWhitespace xs = foldl f "" (words xs)
                                         else x ++ y
 
 eval :: String -> Env
-eval c = case parse program [] ((removeWhitespace . removeComments) c) of
-           Nothing          -> error "Invalid input"
-           Just (e, _, [])  -> e
-           Just (e, _, out) -> error $ "Invalid input: unused '" ++ out ++ "'"
-
+eval c = if null cleanedc
+           then []
+           else case parse program [] cleanedc of
+             Nothing          -> error "Invalid input"
+             Just (e, _, [])  -> e
+             Just (e, _, out) -> error $ "Invalid input: unused '" ++ out ++ "'"
+         where cleanedc = (removeWhitespace . removeComments) c

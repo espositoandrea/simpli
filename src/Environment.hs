@@ -3,7 +3,7 @@ module Environment (Variable(..), Env, modifyEnv, searchVariable) where
 data Variable = Variable { name  :: String
                          , vtype :: String
                          , value :: Int
-                         }
+                         } deriving Eq
 
 instance Show Variable where
   -- show :: a -> String
