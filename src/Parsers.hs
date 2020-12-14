@@ -26,6 +26,7 @@ removeWhitespace xs = foldl f "" (words xs)
                                         else if any (`isPrefixOf` y) ["do","then"]
                                         then x ++ " " ++ y ++ " "
                                         else x ++ y
+
 eval :: String -> Env
 eval c = case parse program [] ((removeWhitespace . removeComments) c) of
            Nothing          -> error "Invalid input"
