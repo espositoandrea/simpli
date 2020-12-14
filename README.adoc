@@ -1,0 +1,66 @@
+= SIMPLI: The Simple IMP Language Interpreter
+Andrea Esposito <a.esposito39@studenti.uniba.it>
+
+SIMPLI is an interpreter for the IMP language, a typical imperative language.
+
+== Content of the Folder
+
+`docs/`:: This directory contains the documentation and the presentation of the
+          interpreter.
+`src/`:: This directory contains the source code of the interpreter. 
+`test/`:: This directory contains the unit test for the interpreter.
+
+
+== Building
+
+To build the SIMPLI interpreter, simply run `cabal build` in the root project
+directory. **Note:** it is not necessary to actually build the tool and use it
+as an executable: you can use `cabal run` to run it, `cabal repl` to open an
+interactive shell or even use _Hugs_ by starting an `hugs` instance in the
+`src` directory.
+
+== Usage
+
+There are four ways of using SIMPLI:
+
+- Interpreting a source file
+- Interpreting the standard input
+- Interpreting a command
+- Using it as a library
+
+=== Interpreting a source file
+
+[source,shell]
+----
+$ cat code.imp # The content of the input file
+x := 3; y := x + 4
+$ simpli code.imp
+[x = 3,y = 7]
+----
+
+=== Interpreting the standard input
+
+[source,shell]
+----
+$ echo "x := 3; y := x + 4" | simpli
+[x = 3,y = 7]
+----
+
+=== Interpreting a command
+
+[source,shell]
+----
+$ simpli -c "x := 3; y := x + 4"
+[x = 3,y = 7]
+----
+
+=== Using it as a library
+
+Suppose you start a Hugs console inside the `src` directory of this repository:
+
+[source,haskell]
+----
+Hugs> :load Parsers
+Parsers> eval "x := 3; y := x + 4"
+[x = 3,y = 7]
+----
