@@ -1,6 +1,6 @@
 cabal-version:       >=1.10
 name:                simpli
-version:             0.1.0
+version:             1.0.0
 synopsis:            SIMPLI, the Simple IMP Language Interpreter
 copyright:           Copyright (C) 2020, Andrea Esposito
 description:         SIMPLI, the Simple IMP Language Interpreter, is (as the
@@ -15,7 +15,10 @@ author:              Andrea Esposito <a.esposito39@studenti.uniba.it>
 maintainer:          Andrea Esposito <a.esposito39@studenti.uniba.it>
 category:            Development
 build-type:          Simple
-extra-source-files:  README.md docs/documentation.pdf docs/presentation.pdf
+extra-source-files:  README.adoc
+                     docs/documentation.pdf
+                     docs/presentation.pdf
+                     factorial.imp
 
 executable simpli
   main-is:             Main.hs
