@@ -436,6 +436,23 @@ repeatWhile s = P(\env input ->
 	\end{columns}
 \end{frame}
 
+\begin{frame}[fragile]
+	\frametitle{Comments and White Space}
+	\begin{itemize}
+		\footnotesize
+		\item Comments are removed on a line-by-line fashion: after an hash
+			symbol, the rest of the line is a comment
+	\end{itemize}
+	\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=8,lastline=15]{Parser.hs}
+	\begin{itemize}
+		\footnotesize
+		\item Some keywords (like \texttt{if} and \texttt{while}) need
+			white space, but it's easier to manage these as exceptions by
+			removing all spaces and readding them where needed.
+	\end{itemize}
+	\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=17,lastline=28]{Parser.hs}
+\end{frame}
+
 \section{Usage}
 \begin{frame}[fragile]
 	\frametitle{Usage}
