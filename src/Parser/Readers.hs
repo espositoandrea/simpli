@@ -2,7 +2,6 @@ module Parser.Readers where
 import           Control.Applicative
 import           Parser.Core
 import           Parser.Fundamentals
-import           Prelude             hiding (return)
 
 aexp :: Parser String
 aexp = (do t <- aterm

@@ -4,7 +4,6 @@ import           Control.Applicative
 import           Parser.Core
 import           Parser.Environment
 import           Parser.Fundamentals
-import           Prelude             hiding (return)
 
 aexp :: Parser Int
 aexp = (do t <- aterm

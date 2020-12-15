@@ -4,7 +4,6 @@ import           Parser.Aexp         (aexp)
 import           Parser.Core
 import           Parser.Fundamentals
 import qualified Parser.Readers      as R
-import           Prelude             hiding (return)
 
 bexp :: Parser Bool
 bexp = (do x <- bterm

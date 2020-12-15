@@ -9,7 +9,6 @@ import           Parser.Core
 import           Parser.Environment
 import           Parser.Fundamentals
 import qualified Parser.Readers      as R
-import           Prelude             hiding (return)
 
 program :: Parser String
 program = (do command

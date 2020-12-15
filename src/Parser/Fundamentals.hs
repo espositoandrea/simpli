@@ -3,7 +3,6 @@ module Parser.Fundamentals where
 import           Control.Applicative
 import           Data.Char           (digitToInt, isDigit, isLower, isUpper)
 import           Parser.Core
-import           Prelude             hiding (return)
 
 -- |The parser "item" fails if the input is empty and consumes the first
 -- character otherwise
@@ -12,20 +11,11 @@ item = P(\env input -> case input of
            []     -> Nothing
            (x:xs) -> Just (env, x, xs))
 
--- |A parser that always fails.
-failure :: Parser a
-failure = P(\_ _ -> Nothing)
-
--- |A parser that always succeeds returning the value v without consuming any
--- input
-return :: a -> Parser a
-return v = pure v -- renaming the Applicative class function "pure"
-
 satisfies :: (Char -> Bool) -> Parser Char
 satisfies p = do x <- item
                  if p x
                    then return x
-                   else failure
+                   else empty
 
 symbol :: String -> Parser String
 symbol [] = return ""
