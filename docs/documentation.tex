@@ -340,26 +340,26 @@ It then defines two helper functions (that are not exported):
 \lstinline|IO ()|, that respectively print the version of SIMPLI and the help
 message that explains the accepted command line arguments and options.
 
-\lstinputlisting[firstline=10, lastline=28]{Cli.hs}
+\lstinputlisting[firstline=10, lastline=35]{Cli.hs}
 
 Then, the definition of the accepted options is provided. To the options listed
 here, two options are always added: ``\texttt{--help}'' and
 ``\texttt{--version}'' that, respectively, print the help message and the
 interpreter's version.
 
-\lstinputlisting[firstline=30, lastline=30]{Cli.hs}
+\lstinputlisting[firstline=37, lastline=37]{Cli.hs}
 
 After the accepted options have been defined, a set of ``default'' options is
 defined.
 
-\lstinputlisting[firstline=32, lastline=33]{Cli.hs}
+\lstinputlisting[firstline=39, lastline=40]{Cli.hs}
 
 Then, the actual options are defined and mapped to the \lstinline|Options|
 record defined before. The function is defined in the IO monad to allow side
 effects, in order to simplify the definition of the ``help'' and ``version''
 options.
 
-\lstinputlisting[firstline=35, lastline=50]{Cli.hs}
+\lstinputlisting[firstline=42, lastline=57]{Cli.hs}
 
 Finally, the actual exported function is defined. It gets the command line arguments using the standard function \lstinline|getArgs| and parses them using the standard function \lstinline|getOpt|. It eventually prints an error message and, if no errors occurred, it applies the default options. It then reads the source code from various sources (depending by the given arguments) in the following order:
 \begin{enumerate}
@@ -370,7 +370,7 @@ Finally, the actual exported function is defined. It gets the command line argum
 	\item If no command or file is specified, the source code is read from the
 		standard input.
 \end{enumerate}
-\lstinputlisting[firstline=52, lastline=70]{Cli.hs}
+\lstinputlisting[firstline=59]{Cli.hs}
 
 \section{The Environment Module}
 \lstinputlisting[firstline=1, lastline=1]{Environment.hs}
@@ -473,14 +473,12 @@ the given program (in this exact order) using the previously defined functions.
 
 This module defines all the Core variable types and functions used by all other
 modules. It starts by defining a Parser type, defining it as an instance of the
-classes \lstinline|Functor|, \lstinline|Applicative|, \lstinline|Monad| and
-\lstinline|Alternative|.
+classes \lstinline|Functor|, \lstinline|Monad| and \lstinline|Alternative|.
 
 \lstinputlisting[firstline=5, lastline=5]{Parser/Core.hs}
-\lstinputlisting[firstline=11, lastline=15]{Parser/Core.hs}
-\lstinputlisting[firstline=17, lastline=24]{Parser/Core.hs}
-\lstinputlisting[firstline=26, lastline=30]{Parser/Core.hs}
-\lstinputlisting[firstline=32, lastline=39]{Parser/Core.hs}
+\lstinputlisting[firstline=10, lastline=14]{Parser/Core.hs}
+\lstinputlisting[firstline=16, lastline=23]{Parser/Core.hs}
+\lstinputlisting[firstline=25, lastline=32]{Parser/Core.hs}
 
 It also defines a \lstinline|parse| function that is used to actually apply a
 parser given an environment.
@@ -499,25 +497,22 @@ And then it defines some useful basic parsers:
 \begin{description}
 	\item[item] A parser that reads a single character and always succeeds if
 		it's applied to a non-empty string.
-	\item[failure] A parser that always fails.
-	\item[return] A parser that always succeed, returning a value without
-		consuming any input.
 	\item[satisfies] A parser that reads a character and succeeds if the
 		character satisfies a predicate (given as its first parameter).
 	\item[symbol] A parser that reads a symbol or a keyword.
 \end{description}
 
-\lstinputlisting[firstline=8, lastline=34]{Parser/Fundamentals.hs}
+\lstinputlisting[firstline=8, lastline=24]{Parser/Fundamentals.hs}
 
 It then defines the parsers for natural numbers by simply applying the grammar
 defined in \autoref{sec:grammar-numbers}.
 
-\lstinputlisting[firstline=36, lastline=50]{Parser/Fundamentals.hs}
+\lstinputlisting[firstline=26, lastline=40]{Parser/Fundamentals.hs}
 
 Finally, it defines the parsers for identifiers by simply applying the grammar
 defined in \autoref{sec:grammar-id}.
 
-\lstinputlisting[firstline=52, lastline=93]{Parser/Fundamentals.hs}
+\lstinputlisting[firstline=42, lastline=83]{Parser/Fundamentals.hs}
 
 \subsection{The Parser Environment Module}
 \lstinputlisting[firstline=1, lastline=1]{Parser/Environment.hs}
