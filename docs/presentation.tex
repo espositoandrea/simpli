@@ -284,7 +284,7 @@
 		\end{itemize}
 		\column{0.65\textwidth}
 		\lstinputlisting[firstline=10,lastline=14]{Parser/Core.hs}
-		\lstinputlisting[firstline=16,lastline=23]{Parser/Core.hs}
+		\lstinputlisting[firstline=25, lastline=32]{Parser/Core.hs}
 	\end{columns}
 \end{frame}
 
@@ -294,13 +294,15 @@
 		\column{0.3\textwidth}
 		\footnotesize
 		\begin{itemize}
+			\item Being a Monad, a parser must also be an Applicative
 			\item A parser can also be defined as an \texttt{Alternative}, that
 				allows to use the syntax \lstinline{a <|> b} to express the
 				fact that the parser \texttt{b} should be applied if \texttt{a}
 				fails.
 		\end{itemize}
 		\column{0.65\textwidth}
-		\lstinputlisting[firstline=25,lastline=32]{Parser/Core.hs}
+		\lstinputlisting[firstline=16, lastline=23]{Parser/Core.hs}
+		\lstinputlisting[firstline=34, lastline=41]{Parser/Core.hs}
 	\end{columns}
 \end{frame}
 

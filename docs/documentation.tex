@@ -473,12 +473,14 @@ the given program (in this exact order) using the previously defined functions.
 
 This module defines all the Core variable types and functions used by all other
 modules. It starts by defining a Parser type, defining it as an instance of the
-classes \lstinline|Functor|, \lstinline|Monad| and \lstinline|Alternative|.
+classes \lstinline|Functor|, \lstinline|Applicative|, \lstinline|Monad| and
+\lstinline|Alternative|.
 
 \lstinputlisting[firstline=5, lastline=5]{Parser/Core.hs}
 \lstinputlisting[firstline=10, lastline=14]{Parser/Core.hs}
 \lstinputlisting[firstline=16, lastline=23]{Parser/Core.hs}
 \lstinputlisting[firstline=25, lastline=32]{Parser/Core.hs}
+\lstinputlisting[firstline=34, lastline=41]{Parser/Core.hs}
 
 It also defines a \lstinline|parse| function that is used to actually apply a
 parser given an environment.
