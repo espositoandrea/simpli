@@ -1,0 +1,154 @@
+\usetheme{Boadilla}
+\mode<presentation>
+
+\setbeamertemplate{navigation symbols}{}
+
+\setbeamertemplate{itemize subitem}[circle]
+\setbeamertemplate{itemize item}[triangle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{itemize item}{fg=black}
+\setbeamercolor{itemize subitem}{fg=black}
+\setbeamercolor{enumerate items}{fg=black}
+
+\setbeamercolor{block title}{bg=,fg=black}
+\setbeamerfont{block title}{series=\bfseries\small}
+\setbeamercolor{block body}{bg=,fg=black}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+
+\setbeamerfont{title}{series=\bfseries}
+\setbeamerfont{subtitle}{series=\normalfont}
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{subtitle}{fg=white}
+\setbeamercolor{author}{fg=white}
+\setbeamercolor{institute}{fg=white}
+\setbeamercolor{date}{fg=white}
+
+\setbeamercolor{frametitle}{fg=white}
+
+\pgfdeclarehorizontalshading[gradientstart,gradientend]
+      {beamer@frametitleshade}{\paperheight}{
+    color(0pt)=(gradientstart);
+    color(\paperwidth)=(gradientend)
+  }
+
+\title[Short Title]{Long title}
+\subtitle{Sub title}
+\date{\today}
+\author{test}
+
+\setbeamercolor{author in head/foot}{fg=white,bg=}
+\setbeamercolor{title in head/foot}{fg=white,bg=}
+\setbeamercolor{date in head/foot}{fg=white,bg=}
+\setbeamerfont{footline}{size=\fontsize{4}{11}}
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+    \leavevmode%
+    \setbox\beamer@tempbox=\hbox{%
+        \begin{beamercolorbox}[wd=.333333\paperwidth,ht=3.25ex,dp=2ex,left]{author in head/foot}%
+            \usebeamerfont{author in head/foot} \hspace*{2ex} 
+			\insertshortauthor\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}
+			\hspace*{2em}
+			\insertshortdate{}
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=.333333\paperwidth,ht=3.25ex,dp=2ex,center]{title in head/foot}%
+			\usebeamerfont{title in head/foot}\insertshorttitle{}
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=.333333\paperwidth,ht=3.25ex,dp=2ex,right]{date in head/foot}%
+			% \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+            % \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+			\usebeamerfont{date in head/foot} \insertframenumber{} \hspace*{2ex} 
+        \end{beamercolorbox}%
+        }%
+        \beamer@tempdim=\ht\beamer@tempbox%
+        \advance\beamer@tempdim by 4pt%
+        \begin{pgfpicture}{0pt}{0pt}{\paperwidth}{20pt}
+            \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\paperwidth}{\beamer@tempdim}}
+            \pgfusepath{clip}
+            \pgftext[left,base]{\pgfuseshading{beamer@frametitleshade}}
+        \end{pgfpicture}
+        \vskip-\beamer@tempdim%
+        \box\beamer@tempbox%    
+}%
+
+% \setbeamertemplate{headline}
+% {
+    % \leavevmode%
+    % \setbox\beamer@tempbox=\hbox{%
+        % \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.65ex,dp=1.5ex,right]{section in head/foot}%
+            % \usebeamerfont{section in head/foot}\insertsectionhead\hspace*{2ex}
+        % \end{beamercolorbox}%
+        % \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.65ex,dp=1.5ex,left]{subsection in head/foot}%
+            % \usebeamerfont{subsection in head/foot}\hspace*{2ex}\insertsubsectionhead
+        % \end{beamercolorbox}%
+        % }%
+        % \beamer@tempdim=\ht\beamer@tempbox%
+        % \advance\beamer@tempdim by 4pt%
+        % \vskip-\beamer@tempdim%
+        % \begin{pgfpicture}{0pt}{0pt}{\paperwidth}{20pt}
+            % \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\paperwidth}{\beamer@tempdim}}
+            % \pgfusepath{clip}
+            % \pgftext[left,base]{\pgfuseshading{beamer@frametitleshade}}
+        % \end{pgfpicture}
+        % \vskip-\beamer@tempdim%
+        % \box\beamer@tempbox%    
+        % \vskip0pt%
+% }
+
+\setbeamertemplate{frametitle}
+{%
+    \nointerlineskip%
+    \vskip-2pt%
+    \hbox{\leavevmode
+        \advance\beamer@leftmargin by -12bp%
+        \advance\beamer@rightmargin by -12bp%
+        \beamer@tempdim=\textwidth%
+        \advance\beamer@tempdim by \beamer@leftmargin%
+        \advance\beamer@tempdim by \beamer@rightmargin%
+        \hskip-\Gm@lmargin\hbox{%
+            \setbox\beamer@tempbox=\hbox{\begin{minipage}[b][.15\paperheight][c]{\paperwidth}%
+                    \vbox{}\vskip-.75ex%
+                    \leftskip0.3cm%
+                    \rightskip0.3cm plus1fil\leavevmode
+                    \insertframetitle\hfill%
+                    \ifx\insertframesubtitle\@empty%
+                    \strut\par%
+                    \else
+                    \par{\usebeamerfont*{framesubtitle}{\usebeamercolor[fg]{framesubtitle}\insertframesubtitle}\strut\par}%
+                    \fi%
+                    \nointerlineskip
+                    \vbox{}%
+                \end{minipage}}%
+                \beamer@tempdim=\ht\beamer@tempbox%
+                \advance\beamer@tempdim by 2pt%
+                \begin{pgfpicture}{0pt}{0pt}{\paperwidth}{\beamer@tempdim}
+                    \usebeamercolor{frametitle right}
+                    \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\paperwidth}{\beamer@tempdim}}
+                    \pgfusepath{clip}
+                    \pgftext[left,base]{\pgfuseshading{beamer@frametitleshade}}
+                \end{pgfpicture}
+                \hskip-\paperwidth%
+                \box\beamer@tempbox%
+            }%
+            \hskip-\Gm@rmargin%
+        }%
+        \nointerlineskip
+        \vskip-0.2pt
+        % \hbox to\textwidth{\hskip-\Gm@lmargin\pgfuseshading{beamer@topshade}\hskip-\Gm@rmargin}
+        \hbox to\textwidth{\hskip-\Gm@lmargin\hskip-\Gm@rmargin}
+        \vskip-2pt
+}
+
+\newcommand\settocustomtemplate{%
+	\setbeamertemplate{background canvas}{
+		\begin{tikzpicture}[remember picture,overlay]
+			\shade[%
+				top color=gradientstart,
+				bottom color=gradientend,
+				shading angle=45,
+			] (current page.north west) rectangle (current page.south east);
+		\end{tikzpicture}%     
+	}
+}

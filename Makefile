@@ -3,17 +3,16 @@ docs:
 
 clean-docs:
 	cd docs && latexmk -c
-	cd docs && rm -f *.bbl *.run.xml
+	cd docs && rm -f *.bbl *.run.xml *.snm *.vrb *.nav
 
 presentation:
-	cd docs && libreoffice --convert-to pdf presentation.odp
+	cd docs && latexmk -pdf -interaction=batchmode presentation.tex
 
 dist: docs presentation
 	cabal sdist
 
 clean: | clean-docs
 	cd docs && latexmk -C
-	rm -f docs/presentation.pdf
 	cabal clean
 
 .PHONY: docs clean-docs dist clean presentation
