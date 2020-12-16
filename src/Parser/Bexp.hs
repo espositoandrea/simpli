@@ -43,12 +43,15 @@ bfactor = (do symbol "!"
           <|> bcomparison
 
 bcomparison :: Parser Bool
-bcomparison = (do a <- aexp
-                  symbol "="
-                  b <- aexp
-                  return $ a == b)
-              <|>
-              (do a <- aexp
-                  symbol "<="
-                  b <- aexp
-                  return $ a <= b)
+bcomparison = do a <- aexp
+                 symbol "="
+                 b <- aexp
+                 return $ a == b
+              <|> do a <- aexp
+                     symbol "<="
+                     b <- aexp
+                     return $ a <= b
+              <|> do a <- aexp
+                     symbol "<"
+                     b <- aexp
+                     return $ a < b

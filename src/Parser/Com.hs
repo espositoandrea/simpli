@@ -3,8 +3,8 @@ module Parser.Com (program) where
 import           Control.Applicative
 import           Control.Monad       hiding (return)
 import           Environment
-import           Parser.Aexp
-import           Parser.Bexp
+import           Parser.Aexp         (aexp, array)
+import           Parser.Bexp         (bexp)
 import           Parser.Core
 import           Parser.Environment
 import           Parser.Fundamentals
@@ -24,9 +24,25 @@ command = assignment <|> ifThenElse <|> while <|> (symbol "skip")
 
 assignment :: Parser String
 assignment = do var <- identifier
+                symbol "["
+                i <- aexp
+                symbol "]"
                 symbol ":="
                 val <- aexp
-                updateEnv Variable{name=var, vtype="int", value=val}
+                arr <- readArray var
+                if length arr <= i
+                  then empty
+                  else updateEnv Variable{name=var ++ "[" ++ (show i) ++ "]"
+                                         , vtype="int[]"
+                                         , value=val }
+             <|> do var <- identifier
+                    symbol ":="
+                    val <- aexp
+                    updateEnv Variable{name=var, vtype="int", value=val}
+             <|> do var <- identifier
+                    symbol ":="
+                    val <- array
+                    saveArray var val
 
 
 ifThenElse :: Parser String

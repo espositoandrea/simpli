@@ -27,10 +27,39 @@ afactor = (do symbol "("
               a <- aexp
               symbol ")"
               return $ "(" ++ a ++ ")")
-          <|>
-          identifier
-          <|> (do x <- integer
-                  return $ "" ++ (show x))
+          <|> do symbol "|"
+                 a <- array
+                 symbol "|"
+                 return $ "|" ++ a ++ "|"
+          <|> do a <- identifier
+                 symbol "["
+                 i <- aexp
+                 symbol "]"
+                 return $ a ++ "[" ++ i ++ "]"
+          <|> identifier
+          <|> do x <- integer
+                 return $ "" ++ (show x)
+
+array :: Parser String
+array = do a <- basicarray
+           symbol "++"
+           b <- array
+           return $ a ++ "++" ++ b
+        <|> basicarray
+
+basicarray :: Parser String
+basicarray = do symbol "["
+                s <- asequence
+                symbol "]"
+                return $ "[" ++ s ++ "]"
+             <|> identifier
+
+asequence :: Parser String 
+asequence = do a <- aexp
+               symbol ","
+               as <- asequence
+               return $ a ++ "," ++ as
+            <|> aexp
 
 bexp :: Parser String
 bexp = (do x <- bterm
@@ -62,16 +91,18 @@ bfactor = (do symbol "!"
           <|> bcomparison
 
 bcomparison :: Parser String
-bcomparison = (do a <- aexp
-                  symbol "="
-                  b <- aexp
-                  return $ a ++ "==" ++ b)
-              <|>
-              (do a <- aexp
-                  symbol "<="
-                  b <- aexp
-                  return $ a ++ "<=" ++ b)
-
+bcomparison = do a <- aexp
+                 symbol "="
+                 b <- aexp
+                 return $ a ++ "==" ++ b
+              <|> do a <- aexp
+                     symbol "<="
+                     b <- aexp
+                     return $ a ++ "<=" ++ b
+              <|> do a <- aexp
+                     symbol "<"
+                     b <- aexp
+                     return $ a ++ "<" ++ b
 
 
 command :: Parser String
@@ -90,10 +121,21 @@ program = (do x <- command
 
 
 assignment :: Parser String
-assignment= do var <- identifier
-               symbol ":="
-               val <- aexp
-               return $ var ++ ":=" ++ val
+assignment = do var <- identifier
+                symbol ":="
+                val <- aexp
+                return $ var ++ ":=" ++ val
+            <|> do var <- identifier
+                   symbol ":="
+                   val <- array
+                   return $ var ++ ":=" ++ val
+            <|> do arr <- identifier
+                   symbol "["
+                   i <- aexp
+                   symbol "]"
+                   symbol ":="
+                   val <- aexp
+                   return $ arr ++ "[" ++ i ++ "]:=" ++ val
 
 ifThenElse :: Parser String
 ifThenElse = do symbol "if "

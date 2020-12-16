@@ -97,7 +97,7 @@
 \section{The Language Grammar}
 \begin{frame}[fragile]
 \footnotesize
-\frametitle{The Language Grammar (1/3)}
+\frametitle{The Language Grammar (1/4)}
 \begin{columns}
 \column{0.45\textwidth}
 \begin{block}{Integers and Numbers}
@@ -130,48 +130,89 @@
 \end{block}
 \end{columns}
 \end{frame}
+
 \begin{frame}[fragile]
-\footnotesize
-\frametitle{The Language Grammar (2/3)}
-\begin{columns}
-\column{0.45\textwidth}
-\begin{block}{Aexp}
-\begin{grammar}
-	<aexp> ::= <aterm>
-	\alt <aterm> "+" <aexp>
-	\alt <aterm> "-" <aexp>
+	\footnotesize
+	\frametitle{The Language Grammar (2/4)}
+	\begin{columns}
+		\column{0.45\textwidth}
+		\begin{block}{Aexp}
+			\begin{grammar}
+				<aexp> ::= <aterm>
+				\alt <aterm> "+" <aexp>
+				\alt <aterm> "-" <aexp>
 
-	<aterm> ::= <afactor>
-	\alt <afactor> "*" <aterm>
+				<aterm> ::= <afactor> | <afactor> "*" <aterm>
 
-	<afactor> ::= "(" <aexp> ")"
-	\alt <integer>
-	\alt <identifier>
-\end{grammar}
-\end{block}
-\column{0.45\textwidth}
-\begin{block}{Bexp}
-\begin{grammar}
-	<bexp> ::= <bterm>
-	\alt <bterm> "or" <bexp>
+				<afactor> ::= "(" <aexp> ")"
+				\alt `|' <array> `|'
+				\alt <identifier> "[" <aexp> "]"
+				\alt <integer> | <identifier>
+			\end{grammar}
+		\end{block}
+		\column{0.45\textwidth}
+		\begin{block}{Bexp}
+			\begin{grammar}
+				<bexp> ::= <bterm> "or" <bexp> | <bterm>
 
-	<bterm> ::= <bfactor>
-	\alt <bfactor> "and" <bterm>
+				<bterm> ::= <bfactor> "and" <bterm> | <bfactor>
 
-	<bfactor> ::= "true" | "false"
-	\alt "!" <bfactor>
-	\alt "(" <bexp> ")"
-	\alt <bcomparison>
+				<bfactor> ::= "true" | "false"
+				\alt "!" <bfactor>
+				\alt "(" <bexp> ")"
+				\alt <bcomparison>
 
-	<bcomparison> ::= <aexp> "=" <aexp>
-	\alt <aexp> "<=" <aexp>
-\end{grammar}
-\end{block}
-\end{columns}
+				<bcomparison> ::= <aexp> "=" <aexp>
+				\alt <aexp> "<=" <aexp>
+				\alt <aexp> "<" <aexp>
+			\end{grammar}
+		\end{block}
+	\end{columns}
 \end{frame}
+
+\begin{frame}[fragile]
+	\footnotesize
+	\frametitle{The Language Grammar (3/4)}
+	\begin{columns}
+		\column{0.36\textwidth}
+		\begin{grammar}
+			<array> ::= <basicarray>
+			\alt <basicarray> "++" <array>
+
+			<basicarray> ::= "[" <asequence> "]"
+			\alt <identifier>
+
+			<asequence> ::= <aexp>
+			\alt <aexp> "," <asequence>
+		\end{grammar}
+
+		\column{0.63\textwidth}
+		\begin{itemize}
+			\item A new data type
+			\item New operations defined
+				\begin{itemize}
+					\footnotesize
+					\item \textbf{Concatenation:} given $A=\left[ a_1,\ldots a_n\right]$
+						and $B = \left[ b_1,\ldots, b_m\right]$,
+						$A++B=\left[a_1,\ldots, a_n, b_1, \ldots, b_m\right]$
+					\item \textbf{Indexing:} given $A=\left[ a_1,\ldots a_n\right]$,
+						$\forall i = 0,\ldots, n-1: A[i] = a_{i+1}$
+					\item \textbf{Size operator:} given $A=\left[ a_1,\ldots a_n\right]$,
+						$|A|=n$.
+				\end{itemize}
+			\item Arrays are just variables
+				\begin{itemize}
+					\footnotesize
+					\item Parsed as part of $\mathrm{Aexp}$
+					\item Used in assignments
+				\end{itemize}
+		\end{itemize}
+	\end{columns}
+\end{frame}
+
 \begin{frame}[fragile]
 \footnotesize
-\frametitle{The Language Grammar (3/3)}
+\frametitle{The Language Grammar (4/4)}
 \begin{block}{Com}
 \begin{columns}
 \column{0.40\textwidth}
@@ -184,8 +225,6 @@
 	\alt <ifThenElse>
 	\alt <while> | "skip"
 
-	<assignment> ::= <identifier> ":=" <aexp>
-
 \end{grammar}
 \column{0.60\textwidth}
 \begin{grammar}
@@ -193,6 +232,10 @@
 	\alt "if" <bexp> "then" <program> "else" <program> "end"
 
 	<while> ::= "while" <bexp> "do" <program> "end"
+
+	<assignment> ::= <identifier> ":=" <aexp>
+	\alt <identifier> ":=" <array>
+	\alt <identifier> "[" <aexp> "]" ":=" <aexp>
 \end{grammar}
 \end{columns}
 \end{block}
@@ -224,7 +267,7 @@
 \begin{frame}
 	\frametitle{The Environment}
 	\begin{columns}
-		\column{0.35\textwidth}
+		\column{0.45\textwidth}
 		\small
 		\begin{itemize}
 			\item Variables have a name, a type (\texttt{int}) and a value
@@ -233,11 +276,23 @@
 				variable
 			\item A variable can be read from an environment using its name
 		\end{itemize}
+		\column{0.45\textwidth}
+		\lstinputlisting[firstline=11, lastline=15]{Environment.hs}
+		\lstinputlisting[firstline=20, lastline=20]{Environment.hs}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Environment}
+	\small
+	\centerline{Functions to deal with variables and arrays are provided}
+	\begin{columns}
+		\column{0.4\textwidth}
+		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=22, lastline=26]{Environment.hs}
+		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=28, lastline=32]{Environment.hs}
 		\column{0.6\textwidth}
-		\lstinputlisting[firstline=3,lastline=6]{Environment.hs}
-		\lstinputlisting[firstline=12,lastline=12]{Environment.hs}
-		\lstinputlisting[firstline=14,lastline=18]{Environment.hs}
-		\lstinputlisting[firstline=20,lastline=24]{Environment.hs}
+		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=34, lastline=39]{Environment.hs}
+		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=41, lastline=48]{Environment.hs}
 	\end{columns}
 \end{frame}
 
@@ -277,12 +332,12 @@
 				\end{itemize}
 			\item A parser is a Functor, meaning we can apply a function
 				\texttt{fmap}
-			\item A parser is a Monad, meaning we can sequentially apply
-				different parsers
+			\item A parser is an Applicative, meaning it can be applied
+				sequentially (discarding the previously computed results)
 		\end{itemize}
 		\column{0.65\textwidth}
 		\lstinputlisting[firstline=10,lastline=14]{Parser/Core.hs}
-		\lstinputlisting[firstline=25, lastline=32]{Parser/Core.hs}
+		\lstinputlisting[firstline=16, lastline=23]{Parser/Core.hs}
 	\end{columns}
 \end{frame}
 
@@ -292,14 +347,15 @@
 		\column{0.3\textwidth}
 		\footnotesize
 		\begin{itemize}
-			\item Being a Monad, a parser must also be an Applicative
+			\item A parser is a Monad, meaning we can sequentially apply
+				different parsers
 			\item A parser can also be defined as an \texttt{Alternative}, that
 				allows to use the syntax \lstinline{a <|> b} to express the
 				fact that the parser \texttt{b} should be applied if \texttt{a}
 				fails.
 		\end{itemize}
 		\column{0.65\textwidth}
-		\lstinputlisting[firstline=16, lastline=23]{Parser/Core.hs}
+		\lstinputlisting[firstline=25, lastline=32]{Parser/Core.hs}
 		\lstinputlisting[firstline=34, lastline=41]{Parser/Core.hs}
 	\end{columns}
 \end{frame}
@@ -313,12 +369,16 @@
 			readability
 		\item Moving the environment functions in the Parser monad
 			\begin{itemize}
-				\item \lstinline{modifyEnv} $\mapsto$ \lstinline{updateEnv}
-				\item \lstinline{searchVariable} $\mapsto$ \lstinline{readVariable}
+				\item \lstinline{modifyEnv} $\mapsto$ \lstinline{updateEnv},
+					\lstinline{modifyArray} $\mapsto$ \lstinline{saveArray}
+				\item \lstinline{searchVariable} $\mapsto$ \lstinline{readVariable},
+					\lstinline{searchArray} $\mapsto$ \lstinline{readArray}
 			\end{itemize}
 	\end{itemize}
-	\lstinputlisting[firstline=5,lastline=6]{Parser/Environment.hs}
-	\lstinputlisting[firstline=8,lastline=11]{Parser/Environment.hs}
+	\lstinputlisting[firstline=13, lastline=14]{Parser/Environment.hs}
+	\lstinputlisting[firstline=16, lastline=19]{Parser/Environment.hs}
+	\lstinputlisting[firstline=21, lastline=22]{Parser/Environment.hs}
+	\lstinputlisting[firstline=24, lastline=27]{Parser/Environment.hs}
 \end{frame}
 
 \begin{frame}
@@ -326,9 +386,20 @@
 	\begin{columns}
 		\column{0.4\textwidth}
 		\lstinputlisting[firstline=8,lastline=18]{Parser/Aexp.hs}
-		\column{0.4\textwidth}
 		\lstinputlisting[firstline=20,lastline=25]{Parser/Aexp.hs}
-		\lstinputlisting[firstline=27,lastline=35]{Parser/Aexp.hs}
+		\column{0.4\textwidth}
+		\lstinputlisting[firstline=27,lastline=42]{Parser/Aexp.hs}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Arithmetic Parsing: Arrays (\texttt{array})}
+	\begin{columns}
+		\column{0.4\textwidth}
+		\lstinputlisting[firstline=44,lastline=49]{Parser/Aexp.hs}
+		\column{0.4\textwidth}
+		\lstinputlisting[firstline=51,lastline=57]{Parser/Aexp.hs}
+		\lstinputlisting[firstline=59,lastline=65]{Parser/Aexp.hs}
 	\end{columns}
 \end{frame}
 
@@ -354,13 +425,13 @@ bfactor = (do symbol "!"
 \end{lstlisting}
 		\column{0.4\textwidth}
 		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=18,lastline=26]{Parser/Bexp.hs}
-		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=45,lastline=54]{Parser/Bexp.hs}
+		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=45]{Parser/Bexp.hs}
 	\end{columns}
 	\centerline{\scriptsize Note: short circuited evaluation implemented in \texttt{bexp} and \texttt{bterm}}
 \end{frame}
 
 \begin{frame}[fragile]
-	\frametitle{Command Parsing (\texttt{program}, 1/2)}
+	\frametitle{Command Parsing (\texttt{program}, 1/3)}
 	\begin{columns}
 		\column{0.45\textwidth}
 		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=13,lastline=19]{Parser/Com.hs}
@@ -369,23 +440,19 @@ command :: Parser String
 command = assignment <|> ifThenElse
           <|> while <|> (symbol "skip")
 \end{lstlisting}
-\begin{lstlisting}[basicstyle=\ttfamily\tiny]
-assignment :: Parser String
-assignment = do var <- identifier
-                symbol ":="
-                val <- aexp
-                updateEnv Variable{ name=var
-                                  , vtype="int"
-                                  , value=val
-                                  }
-\end{lstlisting}
 		\column{0.45\textwidth}
-		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=32,lastline=48]{Parser/Com.hs}
+		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=48,lastline=64]{Parser/Com.hs}
 	\end{columns}
 \end{frame}
 
+\begin{frame}
+	\frametitle{Command Parsing (arrays, 2/3)}
+	\centerline{\small Arrays are treated during assignments}
+	\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=25,lastline=45]{Parser/Com.hs}
+\end{frame}
+
 \begin{frame}[fragile]
-	\frametitle{Command Parsing (\texttt{program}, 2/2)}
+	\frametitle{Command Parsing (\texttt{program}, 3/3)}
 	\begin{columns}
 		\column{0.45\textwidth}
 		\small
@@ -402,7 +469,7 @@ assignment = do var <- identifier
 			\end{itemize}
 		\end{itemize}
 		\column{0.45\textwidth}
-		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=50,lastline=63]{Parser/Com.hs}
+		\lstinputlisting[basicstyle=\ttfamily\tiny,firstline=66,lastline=79]{Parser/Com.hs}
 \begin{lstlisting}[basicstyle=\ttfamily\tiny]
 repeatWhile :: String -> Parser String
 repeatWhile s = P(\env input ->

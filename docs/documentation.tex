@@ -111,7 +111,7 @@ the letters from ``a'' to ``z'', both in upper and lower case.
 	<alphanum> ::= <upper> <alphanum>
 	\alt <lower> <alphanum>
 	\alt <natural> <alphanum>
-	\alt<upper> | <lower> | <natural>
+	\alt <upper> | <lower> | <natural>
 
 	<lower> ::= "a" | "b" | ... | "z"
 
@@ -131,7 +131,24 @@ provided operations are sum, difference and product.
 	<aterm> ::= <afactor> | <afactor> "*" <aterm>
 
 	<afactor> ::= "(" <aexp> ")"
+	\alt `|' <array> `|'
+	\alt <identifier> "[" <aexp> "]"
 	\alt <integer> | <identifier>
+\end{grammar}
+
+\paragraph{Arrays}
+
+An array is a sequence of data having the same type. It is defined by a type
+and a dimension, i.e. the number of elements contained in the array. The
+grammar to define and use and array is the following.
+
+\begin{grammar}
+	<array> ::= <basicarray> | <basicarray> "++" <array>
+
+	<basicarray> ::= "[" <asequence> "]"
+	\alt <identifier>
+
+	<asequence> ::= <aexp> | <aexp> "," <asequence>
 \end{grammar}
 
 \subsubsection{Boolean Expressions}\label{sec:grammar-bexp}
@@ -157,7 +174,7 @@ symbol ``$\leq$'' will be represented using ``$<=$'' (as many other languages).
 	\alt "(" <bexp> ")"
 	\alt <bcomparison>
 
-	<bcomparison> ::= <aexp> "=" <aexp> | <aexp> "<=" <aexp>
+	<bcomparison> ::= <aexp> "=" <aexp> | <aexp> "<=" <aexp> | <aexp> "<" <aexp>
 \end{grammar}
 
 \subsubsection{Imperative Commands}\label{sec:grammar-com}
@@ -171,6 +188,8 @@ commands are the ones presented before.
 	<command> ::= <assignment> | <ifThenElse> | <while> | "skip"
 
 	<assignment> ::= <identifier> ":=" <aexp>
+	\alt <identifier> ":=" <array>
+	\alt <identifier> "[" <aexp> "]" ":=" <aexp>
 
 	<ifThenElse> ::= "if" <bexp> "then" <program> "end"
 	\alt "if" <bexp> "then" <program> "else" <program> "end"
@@ -204,6 +223,13 @@ described in the following paragraphs.
 		languages like the POSIX Shell Command Language \cite{shell-syntax} or
 		Python \cite{python-syntax}.The finite state automaton used to
 		recognized the comments is shown in \autoref{fig:comment-automaton}.
+	\item A new boolean comparison operator has been defined. This is the
+		\texttt{<} operator (the same as the mathematical ``less than''
+		operator). Given $a$ and $b$ two arithmetical expressions, the
+		following holds:
+		\[a<b \iff \left(a\leq b\right) \land \neg\left(a = b\right)\]
+		This operator has been defined as a short hand to easily work with
+		arrays.
 \end{itemize}
 
 \begin{figure}[H]
@@ -219,6 +245,40 @@ described in the following paragraphs.
 	\caption[Finite state automaton to recognize comments]{Finite state automaton to recognize comments. The $\ast$ symbol denotes all characters. The notation $\ast - \texttt{"a"}$ denotes all characters except ``a''.}
 	\label{fig:comment-automaton}
 \end{figure}
+
+\subsection{Arrays}
+
+The IMP language has been extended with a new grammar to manage arrays. Arrays
+are defined as sequences of variables having the same type and a semantical
+connection between one another. In IMP, an array is indexed starting from zero
+(like in C++ \cite{Stroustrup2013} and many other languages). An array is
+similar to the mathematical concept of ``vector'', that will be used in the
+following paragraphs to define some operations on the arrays.
+
+In IMP, the only supported primitive type is the integer, so an array in IMP of
+size $n$ is an element of the set $\mathbb{Z}^n$, where $\mathbb{Z}$ is the set
+of the positive and negative integers, including zero.
+
+A few basic operations on arrays have been defined and are formalized in the
+following paragraphs.
+
+\begin{itemize}
+	\item An array $A=\left[a_1,a_2,\ldots,a_n\right]\in\mathbb{Z}^n$, as
+		already stated, indexed starting from 0. In IMP (as in many other
+		languages) the notation $A[i]$ is used to get the ($i+1$)-th element of
+		the array, so $\forall i=0,\ldots,n-1: A[i]=a_{i+1}$. 
+	\item An array $A\in\mathbb{Z}^n$ is said to be of ``size'' $n$. in IMP, to
+		get the size of a vector, the operator
+		$|\cdot|:\mathbb{Z}^n\to\mathbb{N}$ is defined such that
+		$A\in\mathbb{Z}^n\mapsto n$.
+	\item A new operation is defined on the arrays: the concatenation
+		``\texttt{++}''.  Given two arrays $A=\left[ a_1,a_2,\ldots,a_n \right]
+		\in\mathbb{Z}^n$ and $B=\left[ b_1,b_2,\ldots,b_m\right]
+		\in\mathbb{Z}^m$ the concatenation is the operation
+		$++:\mathbb{Z}^n\to\mathbb{Z}^m\to\mathbb{Z}^{n+m}$ such that:
+		\[A++B=\left[ a_1, a_2, \ldots, a_n, b_1, b_2, \ldots, b_m \right]\]
+\end{itemize}
+
 
 \chapter{Design}
 
@@ -377,7 +437,12 @@ options.
 
 \lstinputlisting[firstline=42, lastline=57]{Cli.hs}
 
-Finally, the actual exported function is defined. It gets the command line arguments using the standard function \lstinline|getArgs| and parses them using the standard function \lstinline|getOpt|. It eventually prints an error message and, if no errors occurred, it applies the default options. It then reads the source code from various sources (depending by the given arguments) in the following order:
+Finally, the actual exported function is defined. It gets the command line
+arguments using the standard function \lstinline|getArgs| and parses them using
+the standard function \lstinline|getOpt|. It eventually prints an error message
+and, if no errors occurred, it applies the default options. It then reads the
+source code from various sources (depending by the given arguments) in the
+following order:
 \begin{enumerate}
 	\item If a command is provided through ``\texttt{--command}'', then the
 		provided command is used as source code.
@@ -391,26 +456,28 @@ Finally, the actual exported function is defined. It gets the command line argum
 \section{The Environment Module}
 \lstinputlisting[firstline=1, lastline=1]{Environment.hs}
 
-The Environment module defines how the environment is managed. It exports all of its content, described in the following paragraphs.
+The Environment module defines how the environment is managed. It exports all
+of its content, described in the following paragraphs.
 
 The concept of ``variable'' is defined. A variable is seen as a record having a
 name (the identifier of the variable), a type (in this version of the
 interpreter, only integers are supported) and a value (the actual value
 contained in the variable).
 
-\lstinputlisting[firstline=3, lastline=6]{Environment.hs}
+\lstinputlisting[firstline=11, lastline=15]{Environment.hs}
 
 Then, the \lstinline|Variable| type is defined as an instance of the class
 \lstinline|Show|, to customize the way a variable is converted to String
 (especially when printed as output).
 
-\lstinputlisting[firstline=8, lastline=10]{Environment.hs}
+\lstinputlisting[firstline=17, lastline=18]{Environment.hs}
 
 Then, the environment itself is defined as a sequence of variables.
 
-\lstinputlisting[firstline=12, lastline=12]{Environment.hs}
+\lstinputlisting[firstline=20, lastline=20]{Environment.hs}
 
-A function to modify an existing environment is then defined. Given an environment and a variable, it returns a new environment that is:
+A function to modify an existing environment is then defined. Given an
+environment and a variable, it returns a new environment that is:
 \begin{itemize}
 	\item The old environment plus the variable if the variable is not already
 		in the environment.
@@ -418,14 +485,21 @@ A function to modify an existing environment is then defined. Given an environme
 		already in the old environment (the previous value is then discarded
 		after the update).
 \end{itemize}
-\lstinputlisting[firstline=14, lastline=18]{Environment.hs}
+\lstinputlisting[firstline=22, lastline=26]{Environment.hs}
 
-Finally, a function that searches a variable in an environment is provided.
+Furthermore, a function that searches a variable in an environment is provided.
 Given an environment and a string, it searches in the environment for a
 variable whose name is the given string and returns its value if the variable
 is in the environment.
 
-\lstinputlisting[firstline=20, lastline=24]{Environment.hs}
+\lstinputlisting[firstline=28, lastline=32]{Environment.hs}
+
+Finally, a specialized version of the two above functions to work with arrays
+is provided. The first one updates (or saves) an array, the second one searches
+all the values contained in an array in the environment.
+
+\lstinputlisting[firstline=34, lastline=39]{Environment.hs}
+\lstinputlisting[firstline=41, lastline=48]{Environment.hs}
 
 \section{The Parser Module}
 
@@ -464,7 +538,9 @@ provides useful functions on lists).
 
 \lstinputlisting[firstline=3, lastline=7]{Parser.hs}
 
-Then, a function to remove comments from the source code is provided. It removes, for each line, all characters after an hash symbol (see \autoref{sec:additions}).
+Then, a function to remove comments from the source code is provided. It
+removes, for each line, all characters after an hash symbol (see
+\autoref{sec:additions}).
 
 \lstinputlisting[firstline=8, lastline=15]{Parser.hs}
 
@@ -490,7 +566,24 @@ the given program (in this exact order) using the previously defined functions.
 This module defines all the Core variable types and functions used by all other
 modules. It starts by defining a Parser type, defining it as an instance of the
 classes \lstinline|Functor|, \lstinline|Applicative|, \lstinline|Monad| and
-\lstinline|Alternative|.
+\lstinline|Alternative|. A brief explaination on the reasons that led to this
+choices is given in the following paragraphs.
+
+\begin{itemize}
+	\item A Parser is a Functor such that the function \lstinline|fmap| can be
+		applied to it. In other words, a Parser is a Functor because a function
+		can be applied to the generic type that the Parser holds without
+		loosing the Parser structure itself.
+	\item A Parser is an Applicative because it is a Functor that can be
+		applied sequentially and has no dependencies on the results of
+		previously applied parsers (i.e. a parser can be applied sequentially
+		discarding the previous parsers' output).
+	\item A Parser is a Monad because it is an Applicative that can use the
+		result of previously applied parsers (i.e. a parser can be applied
+		sequentially using the output of the previous parsers).
+	\item A Parser is an Alternative because it is an Applicative that can fail
+		and may have an alternative parser to run when that happens.
+\end{itemize}
 
 \lstinputlisting[firstline=5, lastline=5]{Parser/Core.hs}
 \lstinputlisting[firstline=10, lastline=14]{Parser/Core.hs}
@@ -540,25 +633,38 @@ environment management, while still being able of using the functions inside
 ``\emph{do-blocks}''. To do that, it uses the Environment module and the core
 parsers' definitions.
 
-\lstinputlisting[firstline=2, lastline=3]{Parser/Environment.hs}
+\lstinputlisting[firstline=9, lastline=11]{Parser/Environment.hs}
 
 It then provides a simple function to update an environment given a variable.
 This basically is the Parser-monad representation of the function
 \lstinline|modifyEnv| provided in the Environment module.
 
-\lstinputlisting[firstline=5, lastline=6]{Parser/Environment.hs}
+\lstinputlisting[firstline=13, lastline=14]{Parser/Environment.hs}
 
-Finally it provides a simple function to read a variable value from an
-environment.  This basically is the Parser-monad representation of the
-function \lstinline|searchVariable| provided in the Environment module.
+It then provides a simple function to read a variable value from an
+environment. This basically is the Parser-monad representation of the function
+\lstinline|searchVariable| provided in the Environment module.
 
-\lstinputlisting[firstline=8, lastline=11]{Parser/Environment.hs}
+\lstinputlisting[firstline=16, lastline=19]{Parser/Environment.hs}
+
+Furthermore, it provides a simple function to update an environment given a
+variable.  This basically is the Parser-monad representation of the function
+\lstinline|modifyArray| provided in the Environment module.
+
+\lstinputlisting[firstline=21, lastline=22]{Parser/Environment.hs}
+
+Finally, it provides a simple function to read an array value from an
+environment. This basically is the Parser-monad representation of the function
+\lstinline|searchArray| provided in the Environment module.
+
+\lstinputlisting[firstline=24, lastline=27]{Parser/Environment.hs}
 
 \subsection{The Parser Aexp Module}
 \lstinputlisting[firstline=1, lastline=1]{Parser/Aexp.hs}
 
 This modules provide a parser \lstinline|aexp| for the $\mathrm{Aexp}$
-expressions. It uses the other parsers modules, as follows.
+expressions and a parser \lstinline|array| to work with arrays. It uses the
+other parsers modules, as follows.
 
 \lstinputlisting[firstline=3, lastline=7]{Parser/Aexp.hs}
 
@@ -595,7 +701,8 @@ grammar given in \autoref{sec:grammar-com}.
 
 It should be noted that, to deal with the ``while-do'' construct, the parser
 simply repeats the while by prepending it to the input string until the
-condition is false (function \lstinline|repeatWhile|).
+condition is false (function \lstinline|repeatWhile|). This is basically a
+simple implementation of the \emph{fixed point} operator.
 
 \subsection{The Parser Readers Module}
 \lstinputlisting[firstline=1, lastline=1]{Parser/Readers.hs}

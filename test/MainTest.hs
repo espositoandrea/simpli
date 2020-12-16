@@ -1,9 +1,10 @@
 module Main (main) where
 
-import Test.HUnit
-import System.Exit
-import Parser (eval)
-import Environment (Variable(..))
+import           Control.Exception
+import           Environment       (Variable (..))
+import           Parser            (eval)
+import           System.Exit
+import           Test.HUnit
 
 testEmptyProgram = TestCase(assertEqual
                              "Empty program"
@@ -56,10 +57,51 @@ testWhileSingleRun = TestCase(assertEqual
                              )
 
 testWhileMultipleRun = TestCase(assertEqual
-                               "Testing 'x:=1;while x<=5 do x:=x+1 end"
-                               [Variable {name="x", vtype="int", value=6}]
-                               (eval "x:=1;while x<=5 do x:=x+1 end")
+                                 "Testing 'x:=1;while x<=5 do x:=x+1 end"
+                                 [Variable {name="x", vtype="int", value=6}]
+                                 (eval "x:=1;while x<=5 do x:=x+1 end")
                              )
+
+testArrayAssignment = TestCase(assertEqual
+                                 "Testing 'x:=[1,2,3]'"
+                                 [ Variable {name="x[0]", vtype="int[]", value=1}
+                                 , Variable {name="x[1]", vtype="int[]", value=2}
+                                 , Variable {name="x[2]", vtype="int[]", value=3}
+                                 ]
+                                 (eval "x:=[1,2,3]")
+                              )
+
+testArrayConcatenation = TestCase(assertEqual
+                                    "Testing 'x:=[1]++[2,3]'"
+                                    [ Variable {name="x[0]", vtype="int[]", value=1}
+                                    , Variable {name="x[1]", vtype="int[]", value=2}
+                                    , Variable {name="x[2]", vtype="int[]", value=3}
+                                    ]
+                                    (eval "x:=[1]++[2,3]")
+                                 )
+testArrayLength = TestCase(assertEqual
+                             "Testing 'x:=|[2,3]|'"
+                             [Variable {name="x", vtype="int", value=2}]
+                             (eval "x:=|[2,3]|")
+                           )
+
+testArrayUpdate = TestCase(assertEqual
+                             "Testing 'x:=[0,0,0];x[1]:=1'"
+                             [ Variable {name="x[0]", vtype="int[]", value=0}
+                             , Variable {name="x[1]", vtype="int[]", value=1}
+                             , Variable {name="x[2]", vtype="int[]", value=0}
+                             ]
+                             (eval "x:=[0,0,0];x[1]:=1")
+                          )
+testArrayWhile = TestCase(assertEqual
+                             "Testing 'x:=[2,3,5];i:=0;while i < |x| do x[i]:=x[i]*x[i];i:=i+1;end'"
+                             [ Variable {name="x[0]", vtype="int[]", value=4}
+                             , Variable {name="x[1]", vtype="int[]", value=9}
+                             , Variable {name="x[2]", vtype="int[]", value=25}
+                             , Variable {name="i", vtype="int", value=3}
+                             ]
+                             (eval "x:=[2,3,5];i:=0;while i < |x| do x[i]:=x[i]*x[i];i:=i+1;end")
+                          )
 
 main :: IO()
 main = do counts <- runTestTT(test [ testEmptyProgram
@@ -71,6 +113,11 @@ main = do counts <- runTestTT(test [ testEmptyProgram
                                    , testWhileNoRun
                                    , testWhileSingleRun
                                    , testWhileMultipleRun
+                                   , testArrayAssignment
+                                   , testArrayConcatenation
+                                   , testArrayLength
+                                   , testArrayUpdate
+                                   , testArrayWhile
                                    ])
           if errors counts + failures counts == 0
             then exitSuccess
