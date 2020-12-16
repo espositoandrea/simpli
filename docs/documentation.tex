@@ -2,6 +2,7 @@
 \usepackage[backend=biber,sorting=none]{biblatex}
 \usepackage{tikz}
 \usepackage{tikz-uml}
+\usetikzlibrary{automata}
 
 \tikzumlset{
 	fill component=yellow!0
@@ -98,9 +99,9 @@ negative natural numbers) expressed in base ten.
 \subsubsection{Identifiers and Variables}\label{sec:grammar-id}
 
 A preliminary grammar to represents variables' identifiers is here presented.
-The IMP language recognizes alphanumeric identifiers that start with a lower
-case letter. The recognized letters are the letters from ``a'' to ``z'', both
-in upper and lower case.
+This implementation of the IMP language recognizes alphanumeric identifiers
+that start either with a lower or upper case letter. The recognized letters are
+the letters from ``a'' to ``z'', both in upper and lower case.
 
 \begin{grammar}
 	<identifier> ::= <upper> <alphanum>
@@ -201,8 +202,23 @@ described in the following paragraphs.
 		code. Comments start with an hash (``\texttt{\#}'') and span for the
 		entire lines. This is a behaviour inspired by commonly used programming
 		languages like the POSIX Shell Command Language \cite{shell-syntax} or
-		Python \cite{python-syntax}.
+		Python \cite{python-syntax}.The finite state automaton used to
+		recognized the comments is shown in \autoref{fig:comment-automaton}.
 \end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[node distance=3cm,->,>=stealth']
+		\node[state, initial] (q0) {$q_0$};
+	\node[state, accepting, right of=q0] (q1) {$q_1$};
+
+	\draw (q0) edge[loop above] node{$\ast - \texttt{"a"}$} (q0)
+	(q0) edge[above] node{\texttt{\#}} (q1)
+	(q1) edge[loop above] node{$\ast$} (q1);
+	\end{tikzpicture}
+	\caption[Finite state automaton to recognize comments]{Finite state automaton to recognize comments. The $\ast$ symbol denotes all characters. The notation $\ast - \texttt{"a"}$ denotes all characters except ``a''.}
+	\label{fig:comment-automaton}
+\end{figure}
 
 \chapter{Design}
 
