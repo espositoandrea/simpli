@@ -6,6 +6,7 @@
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage[english]{babel}
+\usepackage[backend=biber,sorting=none]{biblatex}
 \usepackage{syntax}
 \renewcommand{\syntleft}{$\langle$\itshape}
 \renewcommand{\syntright}{$\rangle$}
@@ -45,7 +46,6 @@
 	language=haskell,
 }
 
-
 \definecolor{gradientstart}{HTML}{0F2027}
 \definecolor{gradientend}{HTML}{2C5364}
 
@@ -53,22 +53,20 @@
 \subtitle{The Simple IMP Language Interpreter}
 \author{Andrea Esposito}
 \institute[]{University of Bari ``Aldo Moro''\\{\scriptsize Formal Methods in Computer Science}}
-\date{\today}
+\date{Academic Year 2020--2021}
 
-
+\addbibresource{bibliography.bib}
 
 \begin{document}
 {
 	\settocustomtemplate
-	\setbeamertemplate{footline}{} 
+	\setbeamertemplate{footline}{%
+        \begin{beamercolorbox}[wd=\paperwidth,ht=3.25ex,dp=2ex,center]{title in head/foot}%
+			Released under CC BY-ND 4.0. Source code available under the GNU GPL v3.
+        \end{beamercolorbox}%
+	} 
 	\begin{frame}
 		\titlepage
-		\vfill
-		\centerline{%
-			\color{white}\tiny
-			Released under CC BY-ND 4.0. Source code available under the GNU
-			GPL v3.
-		}
 	\end{frame}
 	\addtocounter{framenumber}{-1}
 }
@@ -486,6 +484,13 @@ $ simpli -c "x := 3"
 		\end{block}
 	\end{columns}
 \end{frame}
+
+% \section{Bibliography}
+% \begin{frame}
+	% \frametitle{References}
+	% \nocite{Hutton2017}
+	% \printbibliography
+% \end{frame}
 
 {
 	\settocustomtemplate
