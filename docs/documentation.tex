@@ -50,7 +50,8 @@ Haskell language.
 
 \section{The IMP Language}
 
-IMP is a typical imperative programming language. It is, therefore, composed of the classic constructs that all similar languages have:
+IMP is a typical imperative programming language. It is, therefore, composed of
+the classic constructs that all similar languages have:
 \begin{description}
 	\item[Skip] An instruction that has no side effects. It's only purpose is
 		to jump to the next instruction, without any modification to the
@@ -132,6 +133,7 @@ provided operations are sum, difference and product.
 
 	<afactor> ::= "(" <aexp> ")"
 	\alt `|' <array> `|'
+	\alt `|' <cexp> `|'
 	\alt <identifier> "[" <aexp> "]"
 	\alt <integer> | <identifier>
 \end{grammar}
@@ -175,7 +177,27 @@ symbol ``$\leq$'' will be represented using ``$<=$'' (as many other languages).
 	\alt <bcomparison>
 
 	<bcomparison> ::= <aexp> "=" <aexp> | <aexp> "<=" <aexp> | <aexp> "<" <aexp>
+	\alt <cexp> "=" <cexp>
 \end{grammar}
+
+\subsubsection{Characters Expressions}\label{sec:grammar-cexp}
+
+Another addition to the IMP language are strings. Strings are treated similarly
+to an array of character, but they are immutable.
+
+For simplicity, in this grammar the sequence of characters ``\texttt{[\^{}"]}''
+means ``all characters except the double quotes''. This is used only for
+simplicity: there are no restrictions on the character a string can holds (with
+the only exception being the double quotes).
+
+\begin{grammar}
+	<cexp> ::= <cterm> ++ <cexp> | <cterm>
+
+	<cterm> ::= "\"" <string> "\"" | <identifier>
+
+	<string> ::= "[^\"]" <string> | "[^\"]"
+\end{grammar}
+
 
 \subsubsection{Imperative Commands}\label{sec:grammar-com}
 
@@ -188,6 +210,7 @@ commands are the ones presented before.
 	<command> ::= <assignment> | <ifThenElse> | <while> | "skip"
 
 	<assignment> ::= <identifier> ":=" <aexp>
+	\alt <identifier> ":=" <cexp>
 	\alt <identifier> ":=" <array>
 	\alt <identifier> "[" <aexp> "]" ":=" <aexp>
 
@@ -230,6 +253,9 @@ described in the following paragraphs.
 		\[a<b \iff \left(a\leq b\right) \land \neg\left(a = b\right)\]
 		This operator has been defined as a short hand to easily work with
 		arrays.
+	\item A new data type is supported: strings. Strings are basically array of
+		characters and some of the operations defined for arrays are available
+		on strings.
 \end{itemize}
 
 \begin{figure}[H]
@@ -264,7 +290,7 @@ following paragraphs.
 
 \begin{itemize}
 	\item An array $A=\left[a_1,a_2,\ldots,a_n\right]\in\mathbb{Z}^n$, as
-		already stated, indexed starting from 0. In IMP (as in many other
+		already stated, is indexed starting from 0. In IMP (as in many other
 		languages) the notation $A[i]$ is used to get the ($i+1$)-th element of
 		the array, so $\forall i=0,\ldots,n-1: A[i]=a_{i+1}$. 
 	\item An array $A\in\mathbb{Z}^n$ is said to be of ``size'' $n$. in IMP, to
@@ -279,6 +305,29 @@ following paragraphs.
 		\[A++B=\left[ a_1, a_2, \ldots, a_n, b_1, b_2, \ldots, b_m \right]\]
 \end{itemize}
 
+\subsubsection{Strings}
+
+The IMP language has also been extended with a new grammar to manage strings.
+Strings, while not treated as such, can be understood as arrays of characters.
+The following operations are available on strings.
+
+\begin{itemize}
+	\item A string $S=\texttt{"}a_1a_2\ldots a_n\texttt{"}$, as
+		an array, is indexed starting from 0. In IMP (as in many other
+		languages) the notation $S[i]$ is used to get the ($i+1$)-th character
+		of the string, so $\forall i=0,\ldots,n-1: S[i]=a_{i+1}$. 
+	\item A string $S=\texttt{"}a_1a_2\ldots a_n\texttt{"}$ is said to be of ``size'' $n$. in IMP, to
+		get the size of a string, the same array operator
+		$|\cdot|$ is defined such that $S\mapsto n$.
+	\item The concatenation operation ``\texttt{++}'' is also defines on
+		strings.  Given two strings $S_1=\texttt{"}a_1a_2\ldots a_n\texttt{"}$
+		and $S_2=\texttt{"}b_1b_2\ldots b_n\texttt{"}$ the concatenation is the
+		operation $++$ such that:
+		\[S_1++S_2=\texttt{"}a_1a_2\ldots a_nb_1b_2\ldots b_n\texttt{"}\]
+\end{itemize}
+
+Note that strings are immutable: a character, once in a string, cannot be
+changed without rewriting the entire string.
 
 \chapter{Design}
 
@@ -470,11 +519,11 @@ Then, the \lstinline|Variable| type is defined as an instance of the class
 \lstinline|Show|, to customize the way a variable is converted to String
 (especially when printed as output).
 
-\lstinputlisting[firstline=17, lastline=18]{Environment.hs}
+\lstinputlisting[firstline=17, lastline=22]{Environment.hs}
 
 Then, the environment itself is defined as a sequence of variables.
 
-\lstinputlisting[firstline=20, lastline=20]{Environment.hs}
+\lstinputlisting[firstline=23, lastline=23]{Environment.hs}
 
 A function to modify an existing environment is then defined. Given an
 environment and a variable, it returns a new environment that is:
@@ -485,21 +534,21 @@ environment and a variable, it returns a new environment that is:
 		already in the old environment (the previous value is then discarded
 		after the update).
 \end{itemize}
-\lstinputlisting[firstline=22, lastline=26]{Environment.hs}
+\lstinputlisting[firstline=25, lastline=29]{Environment.hs}
 
 Furthermore, a function that searches a variable in an environment is provided.
 Given an environment and a string, it searches in the environment for a
 variable whose name is the given string and returns its value if the variable
 is in the environment.
 
-\lstinputlisting[firstline=28, lastline=32]{Environment.hs}
+\lstinputlisting[firstline=31, lastline=35]{Environment.hs}
 
 Finally, a specialized version of the two above functions to work with arrays
 is provided. The first one updates (or saves) an array, the second one searches
 all the values contained in an array in the environment.
 
-\lstinputlisting[firstline=34, lastline=39]{Environment.hs}
-\lstinputlisting[firstline=41, lastline=48]{Environment.hs}
+\lstinputlisting[firstline=37, lastline=42]{Environment.hs}
+\lstinputlisting[firstline=44, lastline=52]{Environment.hs}
 
 \section{The Parser Module}
 
@@ -548,7 +597,7 @@ After that, a function to remove unnecessary white space is defined. This makes
 the implementation of the parsers simpler, because it allows to assume that no
 unnecessary characters are in the input string.
 
-\lstinputlisting[firstline=17, lastline=28]{Parser.hs}
+\lstinputlisting[firstline=17, lastline=30]{Parser.hs}
 
 Finally, the exported \lstinline|eval| function is provided. Here the actual
 execution takes place: it starts from an empty environment and parses a program
@@ -558,7 +607,7 @@ raising exceptions through the Haskell's standard \lstinline|error| function.
 It should be noted that the function removes all comment and white space from
 the given program (in this exact order) using the previously defined functions.
 
-\lstinputlisting[firstline=30]{Parser.hs}
+\lstinputlisting[firstline=32]{Parser.hs}
 
 \subsection{The Parser Core Module}
 \lstinputlisting[firstline=1, lastline=1]{Parser/Core.hs}
@@ -611,9 +660,12 @@ And then it defines some useful basic parsers:
 	\item[satisfies] A parser that reads a character and succeeds if the
 		character satisfies a predicate (given as its first parameter).
 	\item[symbol] A parser that reads a symbol or a keyword.
+	\item[notsymbol] A parser that reads everything except a symbol or a
+		keyword.
 \end{description}
 
 \lstinputlisting[firstline=8, lastline=24]{Parser/Fundamentals.hs}
+\lstinputlisting[firstline=86, lastline=91]{Parser/Fundamentals.hs}
 
 It then defines the parsers for natural numbers by simply applying the grammar
 defined in \autoref{sec:grammar-numbers}.
@@ -669,7 +721,9 @@ other parsers modules, as follows.
 \lstinputlisting[firstline=3, lastline=7]{Parser/Aexp.hs}
 
 It then provides the parser for the arithmetical expressions by simply following
-the grammar given in \autoref{sec:grammar-aexp}.
+the grammar given in \autoref{sec:grammar-aexp}. In this same parser (doing
+otherwise there would be a circular dependency among modules), are implemented
+also the grammars from arrays and strings (\autoref{sec:grammar-cexp}).
 
 \lstinputlisting[firstline=9]{Parser/Aexp.hs}
 

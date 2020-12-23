@@ -31,6 +31,10 @@ afactor = (do symbol "("
                  a <- array
                  symbol "|"
                  return $ "|" ++ a ++ "|"
+          <|> do symbol "|"
+                 a <- cexp
+                 symbol "|"
+                 return $ "|" ++ a ++ "|"
           <|> do a <- identifier
                  symbol "["
                  i <- aexp
@@ -54,12 +58,39 @@ basicarray = do symbol "["
                 return $ "[" ++ s ++ "]"
              <|> identifier
 
-asequence :: Parser String 
+asequence :: Parser String
 asequence = do a <- aexp
                symbol ","
                as <- asequence
                return $ a ++ "," ++ as
             <|> aexp
+-- STRINGS
+
+cexp :: Parser String
+cexp = do x <- cterm
+          symbol "++"
+          xs <- cexp
+          return $ x ++ "++" ++ xs
+       <|> do x <- cterm
+              symbol "["
+              i <- aexp
+              symbol "]"
+              return $ x ++ "[" ++ i ++ "]"
+       <|> cterm
+
+cterm :: Parser String
+cterm = do symbol "\""
+           x <- string
+           symbol "\""
+           return $ "\"" ++ x ++ "\""
+        <|> identifier
+
+string :: Parser String
+string = do c <- satisfies (/='"')
+            cs <- string
+            return (c:cs)
+         <|> do x <- satisfies (/='"')
+                return [x]
 
 bexp :: Parser String
 bexp = (do x <- bterm
@@ -94,7 +125,7 @@ bcomparison :: Parser String
 bcomparison = do a <- aexp
                  symbol "="
                  b <- aexp
-                 return $ a ++ "==" ++ b
+                 return $ a ++ "=" ++ b
               <|> do a <- aexp
                      symbol "<="
                      b <- aexp
@@ -103,6 +134,10 @@ bcomparison = do a <- aexp
                      symbol "<"
                      b <- aexp
                      return $ a ++ "<" ++ b
+              <|> do a <- cexp
+                     symbol "="
+                     b <- cexp
+                     return $ a ++ "=" ++ b
 
 
 command :: Parser String
@@ -110,25 +145,23 @@ command = assignment <|> ifThenElse <|> while
           <|> symbol "skip"
 
 program :: Parser String
-program = (do x <- command
-              symbol ";"
-              y <- program
-              return $ x ++ ";" ++ y) <|>
-          (do x <- command
-              symbol ";"
-              return $ x ++ ";")
+program = do x <- command
+             symbol ";"
+             y <- program
+             return $ x ++ ";" ++ y
+          <|> do x <- command
+                 symbol ";"
+                 return $ x ++ ";"
           <|> command
 
 
 assignment :: Parser String
 assignment = do var <- identifier
                 symbol ":="
-                val <- aexp
+                val <- P(\env input ->
+                           let took = takeWhile (/=';') input
+                           in Just (env, took, drop (length took) input))
                 return $ var ++ ":=" ++ val
-            <|> do var <- identifier
-                   symbol ":="
-                   val <- array
-                   return $ var ++ ":=" ++ val
             <|> do arr <- identifier
                    symbol "["
                    i <- aexp

@@ -13,7 +13,7 @@ import           Parser.Core (Parser (..))
 updateEnv :: Variable -> Parser String
 updateEnv var = P(\env input -> Just (modifyEnv env var, "", input))
 
-readVariable :: String -> Parser Int
+readVariable :: String -> Parser (Either Int String)
 readVariable name = P(\env input -> case searchVariable env name of
                        Nothing    -> Nothing
                        Just value -> Just (env, value, input))

@@ -1,9 +1,9 @@
-module Parser.Aexp (aexp, array) where
+module Parser.Aexp (aexp, array,cexp) where
 
 import           Control.Applicative
 import           Parser.Core
 import           Parser.Environment  (readArray, readVariable)
-import           Parser.Fundamentals (identifier, integer, symbol)
+import           Parser.Fundamentals (identifier, integer, symbol, satisfies)
 
 aexp :: Parser Int
 aexp = do t <- aterm
@@ -32,14 +32,26 @@ afactor = do symbol "("
                  a <- array
                  symbol "|"
                  return $ length a
+          <|> do symbol "|"
+                 a <- cexp
+                 symbol "|"
+                 return $ length a
           <|> do a <- identifier
                  symbol "["
                  i <- aexp
                  symbol "]"
-                 readVariable $ a ++ "[" ++ (show i) ++ "]"
+                 v <- readVariable $ a ++ "[" ++ (show i) ++ "]"
+                 case v of
+                   Left v  -> return v
+                   Right v -> empty
           <|> do i <- identifier
-                 readVariable i
+                 v <- readVariable i
+                 case v of
+                   Left v  -> return v
+                   Right v -> empty
           <|> integer
+
+-- ARRAYS
 
 array :: Parser [Int]
 array = do a <- basicarray
@@ -63,3 +75,35 @@ asequence = do a <- aexp
                return $ [a] ++ as
             <|> do a <- aexp
                    return [a]
+
+-- STRINGS
+
+cexp :: Parser String
+cexp = do x <- cterm
+          symbol "++"
+          xs <- cexp
+          return $ x ++ xs
+       <|> do x <- cterm
+              symbol "["
+              i <- aexp
+              symbol "]"
+              return $ [x !! i]
+       <|> cterm
+
+cterm :: Parser String
+cterm = do symbol "\""
+           x <- string
+           symbol "\""
+           return x
+        <|> do i <- identifier
+               v <- readVariable i
+               case v of
+                 Left v  -> empty
+                 Right v -> return v
+
+string :: Parser String
+string = do c <- satisfies (/='"')
+            cs <- string
+            return (c:cs)
+         <|> do x <- satisfies (/='"')
+                return [x]

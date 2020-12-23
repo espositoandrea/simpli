@@ -2,6 +2,7 @@ module Parser.Fundamentals where
 
 import           Control.Applicative
 import           Data.Char           (digitToInt, isDigit, isLower, isUpper)
+import Data.List
 import           Parser.Core
 
 -- |The parser "item" fails if the input is empty and consumes the first
@@ -81,3 +82,10 @@ identifier = (do x <- upper
              <|>
              (do x <- lower
                  return [x])
+
+notsymbol :: String -> Parser String
+notsymbol [] = return ""
+notsymbol xs = P(\env input ->
+  case find  ((reverse xs) `isSuffixOf`) (inits . reverse $ input) of
+    Nothing -> Just (env, input, "")
+    Just i -> Just (env, reverse $ drop (length i) $ reverse input, reverse i))
