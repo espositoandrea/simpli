@@ -264,11 +264,11 @@ described in the following paragraphs.
 		\node[state, initial] (q0) {$q_0$};
 	\node[state, accepting, right of=q0] (q1) {$q_1$};
 
-	\draw (q0) edge[loop above] node{$\ast - \texttt{"a"}$} (q0)
+	\draw (q0) edge[loop above] node{$\ast - \texttt{"\#"}$} (q0)
 	(q0) edge[above] node{\texttt{\#}} (q1)
 	(q1) edge[loop above] node{$\ast$} (q1);
 	\end{tikzpicture}
-	\caption[Finite state automaton to recognize comments]{Finite state automaton to recognize comments. The $\ast$ symbol denotes all characters. The notation $\ast - \texttt{"a"}$ denotes all characters except ``a''.}
+	\caption[Finite state automaton to recognize comments]{Finite state automaton to recognize comments. The $\ast$ symbol denotes all characters. The notation $\ast - \texttt{"\#"}$ denotes all characters except ``\#''.}
 	\label{fig:comment-automaton}
 \end{figure}
 

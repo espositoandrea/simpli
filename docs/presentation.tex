@@ -322,7 +322,7 @@
 		\column{0.45\textwidth}
 		\small
 		\begin{itemize}
-			\item Variables have a name, a type (\texttt{int}) and a value
+			\item Variables have a name, a type (\texttt{int} or \texttt{str}) and a value
 			\item An environment is a set of variables
 			\item An environment can be updated by adding or modifying a
 				variable
@@ -385,8 +385,8 @@
 				\end{itemize}
 			\item A parser is a Functor, meaning we can apply a function
 				\texttt{fmap}
-			\item A parser is an Applicative, meaning it can be applied
-				sequentially (discarding the previously computed results)
+			\item A parser is an Applicative, meaning we can apply functions
+				wrapped in parsers to values wrapped in parsers sequentially.
 		\end{itemize}
 		\column{0.65\textwidth}
 		\lstinputlisting[firstline=10,lastline=14]{Parser/Core.hs}
@@ -403,7 +403,7 @@
 			\item A parser is a Monad, meaning we can sequentially apply
 				different parsers
 			\item A parser can also be defined as an \texttt{Alternative}, that
-				allows to use the syntax \lstinline{a <|> b} to express the
+				allows to use the syntax \lstinline!a <|> b! to express the
 				fact that the parser \texttt{b} should be applied if \texttt{a}
 				fails.
 		\end{itemize}
@@ -576,11 +576,11 @@ repeatWhile s = P(\env input ->
 			\node[state, initial] (q0) {$q_0$};
 		\node[state, accepting, right of=q0] (q1) {$q_1$};
 
-		\draw (q0) edge[loop above] node{$\ast - \texttt{"a"}$} (q0)
+		\draw (q0) edge[loop above] node{$\ast - \texttt{"\#"}$} (q0)
 		(q0) edge[above] node{\texttt{\#}} (q1)
 		(q1) edge[loop above] node{$\ast$} (q1);
 		\end{tikzpicture}
-		\caption[Finite state automaton to recognize comments]{Finite state automaton to recognize comments. The $\ast$ symbol denotes all characters. The notation $\ast - \texttt{"a"}$ denotes all characters except ``a''.}
+		\caption[Finite state automaton to recognize comments]{Finite state automaton to recognize comments. The $\ast$ symbol denotes all characters. The notation $\ast - \texttt{"\#"}$ denotes all characters except ``\#''.}
 		\label{fig:comment-automaton}
 	\end{figure}
 \end{frame}

@@ -9,9 +9,9 @@ bexp :: Parser Bool
 bexp = do x <- bterm
           symbol "or"
           if x
-            then do R.bterm
+            then do R.bexp
                     return x
-            else do y <- bterm
+            else do y <- bexp
                     return $ x || y
        <|> bterm
 
